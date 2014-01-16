@@ -7,7 +7,7 @@ var media       = wp.media,
 
 	l10n = media.view.l10n = typeof _wpMediaViewsL10n === 'undefined' ? {} : _wpMediaViewsL10n;
 
-	// override this method completely.
+	// override media input methods.
 	media.view.MediaFrame.Post.prototype.browseRouter = function( view ) {
 		view.set({
 			upload: {
@@ -33,7 +33,6 @@ var media       = wp.media,
 		bindHandlers.apply( this, arguments );
 		// add recorder create handler.
 		this.on( 'content:create:record', this.recordContent, this );
-//		this.on( 'content:render:record', this.recordContent, this );
 		this.on( 'close', this.dismissRecorder, this );
 		frame = this;
 	};
@@ -61,6 +60,41 @@ var media       = wp.media,
 			var self = this, 
 				blob;
 
+
+
+			var b64Data = 'R0lGODdhUAA8AIABAAAAAP///ywAAAAAUAA8AAACS4SPqcvtD6' +
+					'OctNqLs968+w+G4kiW5omm6sq27gvH8kzX9o3n+s73/g8MCofE' +
+					'ovGITCqXzKbzCY1Kp9Sq9YrNarfcrvcLDovH5PKsAAA7',
+				imageUrl = 'data:image/gif;base64,' + b64Data;
+
+			var $img = $('<img src="'+imageUrl+'" />')
+				.appendTo(this.$el)
+			$('<a href="#" class="recorder-okay">Okay</a>')
+				.insertAfter($img).on('click',null,function(){
+
+					file = window.dataURLtoBlob && window.dataURLtoBlob($img.get(0).src)
+					file.loaded = file.size;
+					file.percent = 100;
+					file.id = 'id'+(new Date()).getTime();
+					file.status = 1;
+
+					var attributes = _.extend({
+						file:      file,
+						uploading: true,
+						date:      new Date(),
+						filename:  'Snapshot.gif',
+						menuOrder: 0,
+						uploadedTo: wp.media.model.settings.post.id,
+						type : 'image',
+						type : 'gif'
+					}, _.pick( file, 'loaded', 'size', 'percent' ) );
+
+					file.attachment = wp.media.model.Attachment.create( attributes );
+					wp.Uploader.queue.add(file.attachment);
+					wp.Uploader.refresh();
+			});
+
+			/*
 			this._video = $('<video width="640" height="480" id="webcam-recorder" autoplay="autoplay"></video>')
 				.appendTo(this.$el)
 				.recorder({
@@ -97,6 +131,10 @@ var media       = wp.media,
 			
 			
 			function do_upload( file ) {
+				file.loaded = file.size;
+				file.percent = 100;
+				file.id = 'id'+(new Date()).getTime();
+				
 				var attributes = _.extend({
 					file:      file,
 					uploading: true,
@@ -117,17 +155,18 @@ var media       = wp.media,
 					// `jpg` is not, so map it to `jpeg`.
 					attributes.subtype = ( 'jpg' === image[0] ) ? 'jpeg' : image[0];
 				}
-
+				
 				// Create the `Attachment`.
 				file.attachment = wp.media.model.Attachment.create( attributes );
-
+console.log(file);
 				wp.Uploader.queue.add( file.attachment );
-//				frame.uploader.uploader.added(file.attachment);
+				frame.uploader.uploader.added(file.attachment);
+				frame.uploader.uploader.refresh(file.attachment);
 //				frame.uploader.uploader.uploader.refresh();
 //				frame.uploader.uploader.uploader.start();
 			}
 			
-			
+			*/
 		},
 		start : function(){
 			if ( this._video )
