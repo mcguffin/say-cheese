@@ -25,8 +25,9 @@ var media       = wp.media,
 		});
 	};
 	
-	var bindHandlers = media.view.MediaFrame.Post.prototype.bindHandlers;
-	var webcamRecorder;
+	var bindHandlers = media.view.MediaFrame.Post.prototype.bindHandlers,
+		webcamRecorder,frame;
+	
 	media.view.MediaFrame.Post.prototype.bindHandlers = function() {
 		// parent handlers
 		bindHandlers.apply( this, arguments );
@@ -34,6 +35,7 @@ var media       = wp.media,
 		this.on( 'content:create:record', this.recordContent, this );
 //		this.on( 'content:render:record', this.recordContent, this );
 		this.on( 'close', this.dismissRecorder, this );
+		frame = this;
 	};
 	media.view.MediaFrame.Post.prototype.recordContent = function( content ){
 		var state = this.state();
@@ -56,20 +58,22 @@ var media       = wp.media,
 			_.defaults( this.options, {
 			
 			});
-			var self = this;
+			var self = this, 
+				blob;
+
 			this._video = $('<video width="640" height="480" id="webcam-recorder" autoplay="autoplay"></video>')
 				.appendTo(this.$el)
 				.recorder({
 					camera:true,
 					microphone:false
 				});
-			var blob;
 			$('<a href="#" class="recorder-reset">Reset</a>')
 				.insertAfter(this._video).on('click',null,function(){
 					$('.recorder-reset').css('display','none');
 					$('.recorder-snapshot').css('display','inline');
 					$('.recorder-okay').css('display','none');
 					self._video.reset();
+					return false;
 				}).css('display','none');
 			$('<a href="#" class="recorder-snapshot">Record</a>')
 				.insertAfter(this._video).on('click',null,function(){
@@ -77,17 +81,17 @@ var media       = wp.media,
 					$('.recorder-snapshot').css('display','none');
 					$('.recorder-okay').css('display','inline');
 					self._video.snapshot(function(b){blob=b;});
+					return false;
 				}).css('display','inline');
 			$('<a href="#" class="recorder-okay">Okay</a>')
 				.insertAfter(this._video).on('click',null,function(){
 					$('.recorder-reset').css('display','none');
 					$('.recorder-snapshot').css('display','inline');
 					$('.recorder-okay').css('display','none');
-					var file = blob;
-					// make file like object from
-					// he might help: https://github.com/blueimp/JavaScript-Canvas-to-Blob
-					if ( file )
-						do_upload( file )
+					// he did help: https://github.com/blueimp/JavaScript-Canvas-to-Blob
+					if ( blob )
+						do_upload( blob );
+					return false;
 					
 				}).css('display','none');
 			
@@ -97,13 +101,13 @@ var media       = wp.media,
 					file:      file,
 					uploading: true,
 					date:      new Date(),
-					filename:  file.name,
+					filename:  'Snapshot.png',
 					menuOrder: 0,
 					uploadedTo: wp.media.model.settings.post.id
 				}, _.pick( file, 'loaded', 'size', 'percent' ) );
 
 				// Handle early mime type scanning for images.
-				image = /(?:jpe?g|png|gif)$/i.exec( file.name );
+				image = /(?:jpe?g|png|gif)$/i.exec( file.name || file.type );
 
 				// Did we find an image?
 				if ( image ) {
@@ -118,13 +122,10 @@ var media       = wp.media,
 				file.attachment = wp.media.model.Attachment.create( attributes );
 
 				wp.Uploader.queue.add( file.attachment );
-				console.log(media,media.view.MediaFrame);
-				// don't care!
-//				wp.Uploader.added( file.attachment );
+//				frame.uploader.uploader.added(file.attachment);
+//				frame.uploader.uploader.uploader.refresh();
+//				frame.uploader.uploader.uploader.start();
 			}
-//			console.log(wp.Uploader); // ( file, fileName )
-			// add record button
-			// add
 			
 			
 		},

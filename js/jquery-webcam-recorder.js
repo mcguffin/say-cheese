@@ -70,7 +70,7 @@
 				$canvas.get(0).toBlob(blobCallback,'image/png');
 				$canvas.remove();
 				$image.get(0).src = $canvas.get(0).toDataURL('image/png');
-//					.log($canvas.get(0).toBlob('image/png'));
+//					console.log($canvas.get(0).toBlob('image/png'));
 				this.stop();
 				this.css('display','none');
 				
