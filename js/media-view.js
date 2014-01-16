@@ -85,8 +85,8 @@ var media       = wp.media,
 				}).css('display','inline');
 			$('<a href="#" class="recorder-okay">Okay</a>')
 				.insertAfter(this._video).on('click',null,function(){
-					$('.recorder-reset').css('display','none');
-					$('.recorder-snapshot').css('display','inline');
+					$('.recorder-reset').css('display','inline');
+					$('.recorder-snapshot').css('display','none');
 					$('.recorder-okay').css('display','none');
 					// he did help: https://github.com/blueimp/JavaScript-Canvas-to-Blob
 					if ( blob )

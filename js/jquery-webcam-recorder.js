@@ -1,6 +1,6 @@
 (function($){
 	var userMediaObject, $image, 
-		element = stream = recorder = null;
+		stream = recorder = null;
 	
 	window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
@@ -24,6 +24,8 @@
 		var width,height;
 		
 		this.start = function() {
+			if ( !! $image )
+				$image.remove();
 			navigator.getUserMedia({
 				video: settings.camera,
 				audio: settings.microphone
