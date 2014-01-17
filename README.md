@@ -1,4 +1,6 @@
-== Say Cheese ==
+# Say Cheese #
+
+*This plugin does not work yet *
 
 Should take a picture with your webcam and upload it to WP media library.
 Upload doesn't work. 
