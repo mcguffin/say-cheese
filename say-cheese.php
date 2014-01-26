@@ -5,7 +5,7 @@ Plugin Name: Say Cheese
 Plugin URI: https://github.com/mcguffin/say-cheese/
 Description: Add Media through Webcam
 Author: Jörn Lund
-Version: 0.0.2
+Version: 0.0.3
 Author URI: https://github.com/mcguffin/
 
 Text Domain: cheese
@@ -30,7 +30,7 @@ function cheese_admin_init() {
 		'image' => __('Image'),
 		'paste_instructions' => __('Paste some image Data from your clipboard','cheese'),
 		'paste_error_no_image' => __('No image data pasted.','cheese'),
-		'paste_error_webkit_fake_image' => __('Your Browser does not support pasting processible image data.','cheese'),
+		'paste_error_webkit_fake_image' => __('Your Browser does not support pasting processable image data.','cheese'),
 	) );
 
 	wp_register_style( 'cheese' , plugins_url( 'css/cheese.css' , __FILE__ ) , array( ) , '0.0.1' );
