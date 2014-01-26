@@ -43,7 +43,6 @@
 		},
 		
 		// upload_data_url: 
-		
 		send_img : function( img , filename , mediaFrame ) {
 			if ( ! this.supports.upload_data_url ) {	
 				console.log('Upload not supported');
@@ -134,17 +133,6 @@
 				xhr.send(ui8a.buffer);
 			}
 			
-			/*/ NOPE!
-			$.ajax({
-				contentType: 'multipart/form-data; boundary=' + boundary,
-				data : multipart_string,
-				success : success_callback,
-				type: 'post',
-				url : wp.Uploader.defaults.url,
-				mimeType : 'application/json',
-				processData : false
-			});
-			//*/
 		}
 	};
 	exports.cheese = cheese;

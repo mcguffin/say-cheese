@@ -1,7 +1,7 @@
 (function($){
 	var stream = null;
 	
-	// iOS6 support: http://www.purplesquirrels.com.au/2013/08/webcam-to-canvas-or-data-uri-with-html5-and-javascript/
+	// iOS6 support see: http://www.purplesquirrels.com.au/2013/08/webcam-to-canvas-or-data-uri-with-html5-and-javascript/
 	
 	window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;

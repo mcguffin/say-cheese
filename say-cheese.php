@@ -18,7 +18,6 @@ function cheese_admin_init() {
 	wp_register_script( 'jquery-webcam-recorder' , plugins_url( 'js/jquery-webcam-recorder.js' , __FILE__ ) , array( 'jquery' , 'canvas-to-blob' ) , '0.0.1' );
 	wp_register_script( 'jquery-pasteboard' , plugins_url( 'js/jquery.pasteboard.js' , __FILE__ ) , array( 'jquery' ) , '0.0.1' );
 	wp_register_script( 'cheese' , plugins_url( 'js/cheese.js' , __FILE__ ) , array( 'jquery' ) , '0.0.1' );
-//*
 	wp_register_script( 'cheese-media-view' , plugins_url( 'js/media-view.js' , __FILE__ ) , array('media-editor' , 'jquery-webcam-recorder' , 'jquery-pasteboard' , 'cheese' ) , '0.0.1' );
 	wp_localize_script( 'cheese-media-view' , 'cheese_l10n' , array(
 		'webcam_record' => __('Webcam Record' , 'cheese' ),
@@ -34,17 +33,17 @@ function cheese_admin_init() {
 		'paste_error_webkit_fake_image' => __('Your Browser does not support pasting processible image data.','cheese'),
 	) );
 
-
 	wp_register_style( 'cheese' , plugins_url( 'css/cheese.css' , __FILE__ ) , array( ) , '0.0.1' );
-/*/
-	wp_register_script( 'cheese-media-view' , plugins_url( 'js/test-media-view.js' , __FILE__ ) , array( 'media-editor' , 'jquery' , 'cheese' ) , '0.0.1' );
-//*/
 }
 add_action( 'admin_init' , 'cheese_admin_init');
 
+function cheese_loaded(){
+	load_plugin_textdomain( 'cheese', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
+}
+add_action( 'plugins_loaded' , 'cheese_loaded');
 
 
-function cheese_load(){
+function cheese_load() {
 	wp_enqueue_script( 'cheese-media-view');
 	wp_enqueue_style( 'cheese' );
 }
