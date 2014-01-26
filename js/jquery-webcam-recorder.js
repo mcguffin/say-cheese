@@ -1,31 +1,34 @@
 (function($){
-	var userMediaObject, $image, 
-		stream = recorder = null;
+	var stream = null;
+	
+	// iOS6 support: http://www.purplesquirrels.com.au/2013/08/webcam-to-canvas-or-data-uri-with-html5-and-javascript/
 	
 	window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-	
+	$.create_recorder_element = function( ){
+		// calc generic element id
+		// use <input id="webcam-recorder" type="file" accept="image/*" capture="camera" /> on iOS
+		var html = '<video class="webcam-recorder" width="640" height="480" id="webcam-recorder" autoplay="autoplay"></video>';
+		return $(html);
+	}
 	$.fn.recorder = function( options ) {
 		var settings = $.extend({
 			camera:true,
 			microphone:false
-		},options );
+		},options ) , self = this;
 
 		videoElement = this.get(0);
 
-		var setUserMediaObject = function() {
-			userMediaObject = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-		}
-		
 		if ( ! navigator.getUserMedia ) {
 			console.log('Your browser doesn\'t support ScreenCast.');
 			return this;
 		}
 		var width,height;
+		this.state = 'waiting';
 		
 		this.start = function() {
-			if ( !! $image )
-				$image.remove();
+			self.trigger('statechange');
+				
 			navigator.getUserMedia({
 				video: settings.camera,
 				audio: settings.microphone
@@ -35,7 +38,6 @@
 				} else {
 					videoElement.src = (window.URL && window.URL.createObjectURL(localMediaStream)) || localMediaStream;
 				};
-//				video.play();
 				stream = localMediaStream;
 				// should be separated from this class?
 				
@@ -44,50 +46,42 @@
 				videoElement.addEventListener('playing', function(e) {
 					width = width || videoElement.videoWidth;
 					height = height || videoElement.videoHeight;
-//					console.log(videoElement,'Video dimensions: ' + videoElement.videoWidth + ' x ' + videoElement.videoHeight);
+					self.state = 'recording';
+					self.trigger('statechange');
 				});
 			}.bind(this), function(e) { 
+				self.state = 'error';
+				self.trigger('statechange');
 				if (e.code === 1) {
-				  console.log('User declined permissions.');
+					console.log('User declined permissions.');
 				}
 			});
 		}
 		this.stop = function() {
-			stream.stop();
+			if ( !! stream )
+				stream.stop();
 			videoElement.src = null;
+			self.state = 'stopped';
+			self.trigger('statechange');
 		}
-		this.snapshot = function( blobCallback ) {
+		this.snapshot = function() {
 			// replaces video with img
 			width = width || videoElement.videoWidth;
 			height = height || videoElement.videoHeight;
 			if ( stream ) {
 				var blob;
 				var $canvas = $('<canvas style="display:block"></canvas>')
-					.insertAfter(videoElement).attr('width',width).attr('height',height);
+					.insertAfter(this).attr('width',width).attr('height',height);
 				var canvasContext = $canvas.get(0).getContext('2d');
-				$image = $('<img />')
-					.insertAfter(videoElement).attr('width',width).attr('height',height);
+				canvasContext.drawImage( this.get(0), 0, 0, width, height );
 
-				canvasContext.drawImage( videoElement, 0, 0, width, height );
-				$canvas.get(0).toBlob(blobCallback,'image/png');
+				dataSrc = $canvas.get(0).toDataURL('image/png');
 				$canvas.remove();
-				$image.get(0).src = $canvas.get(0).toDataURL('image/png');
-//					console.log($canvas.get(0).toBlob('image/png'));
-				this.stop();
-				this.css('display','none');
-				
-				return blob;
+				return dataSrc;
 			}
 		}
-		this.reset = function( ) {
-			// replaces video with img
-			$image.remove();
-			this.css('display','block');
-			this.start();
-		}
 		
 		
-		setUserMediaObject();
 		return this;
 	}
 

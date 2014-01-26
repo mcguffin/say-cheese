@@ -1,0 +1,96 @@
+/*
+// record: \F235
+// okay: \F147
+// reset: \F158
+
+recorder:
+
+.recorder {
+	.webcam-recorder {
+	}
+	.instruments {
+		.recorder-record {
+		}
+	}
+}
+
+
+*/
+.wp-core-ui .instruments .setting,
+.wp-core-ui .instruments .button-secondary,
+.wp-core-ui .instruments .button-primary {
+	height:auto;
+	padding-top:0.3em;
+	text-align:center;
+	display:inline-block;
+	float:left;
+}
+.wp-core-ui .instruments .setting {
+	text-align:left;
+	display:block;
+	width:400px;
+	margin:0 1em;
+	padding:0.2em;
+	background:rgba(255,255,255,0.8);
+}
+.wp-core-ui .instruments .setting input {
+	width:100%;
+}
+.wp-core-ui .instruments .setting span {
+	display:block;
+}
+.instruments .dashicons {
+	display:block;
+	font-size:3em;
+	text-align:center;
+	width:auto;
+	line-height:0.75em;
+}
+.recorder,
+.data-source-image {
+	position:relative;
+	margin:1em auto;
+}
+.data-source-image {
+	max-width:100%;
+	height:auto;
+}
+.data-source-image img {
+	width:100%;
+	max-width:100%;
+	height:auto;
+}
+.webcam-recorder .data-source-image,
+.recorder {
+	max-width:640px;
+}
+#pasteboard-injector {
+	text-align:center;
+	color:#aa0000;
+	font-style:italic;
+}
+.instruments {
+	position:absolute;
+	bottom:0;
+	right:0;
+	padding:2em;
+}
+
+
+
+
+
+.pasteboard-inline-content {
+    position: absolute;
+    top: 30%;
+    left: 0px;
+    right: 0px;
+}
+
+.pasteboard-inline-content h3 {
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 400;
+    margin-bottom: 1.6em;
+    text-align:center;
+}
