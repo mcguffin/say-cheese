@@ -1,4 +1,18 @@
 (function($,exports){
+
+	var counter=0;
+	
+	if (window.XMLHttpRequest) {
+		xhr = new XMLHttpRequest();
+	}
+	
+
+	$.extend( wp.Uploader.prototype, {
+		success : function( file_attachment ){
+			console.log(file_attachment);
+		}
+	});
+
 	function guid(){
 		var guid = new Date().getTime().toString(32), i;
 
@@ -17,12 +31,18 @@
 		}[mime] || 'txt';
 	}
 	
-	var counter=0, xhr;
-	if (window.XMLHttpRequest) {
-		xhr = new XMLHttpRequest();
+	function file_data_from_datasrc( src ) {
+			var match = src.match( /data:([a-z0-9\/]+);base64,(.+)$/ );
+			mime_type = match[1];
+			file_contents = match[2];
+		return {
+			contents : match[2],
+			mime_type : match[1],
+			suffix : suffix_from_mime( match[1] )
+		}
 	}
 	
-	cheese = {
+	var cheese = {
 		
 		supports : {
 			upload_data_url: !!xhr && !!(xhr.sendAsBinary || (window.Uint8Array && window.ArrayBuffer)),
@@ -44,26 +64,30 @@
 		
 		// upload_data_url: 
 		send_img : function( img , filename , mediaFrame ) {
+			var file, attributes, file_data,
+				send_data, dashdash, crlf, multipart_string, 
+				file_data_name, name, value, filename, mime_type, xhr;
+			
 			if ( ! this.supports.upload_data_url ) {	
 				console.log('Upload not supported');
 				return false;
 			}
-			var send_data = {
-					action   : wp.Uploader.defaults.multipart_params.action,
-					_wpnonce : wp.Uploader.defaults.multipart_params._wpnonce,
-					post_id  : wp.media.model.settings.post.id*1
-				},
-				boundary = '----multipart_boundary'+guid(),
-				dashdash = '--', crlf = '\r\n' , multipart_string = '',
-				file_data_name = file_data_name || 'upload', 
-				name, value, filename, mime_type ,
-				xhr = new XMLHttpRequest();
-
-
+			
+			send_data = {
+				action   : wp.Uploader.defaults.multipart_params.action,
+				_wpnonce : wp.Uploader.defaults.multipart_params._wpnonce,
+				post_id  : wp.media.model.settings.post.id*1
+			},
+			boundary = '----multipart_boundary'+guid();
+			dashdash = '--'; 
+			crlf = '\r\n';
+			multipart_string = '',
+			file_data_name = wp.Uploader.defaults.file_data_name || 'upload';
+			xhr = new XMLHttpRequest();
 
 			// add file fake to WP media library
-			var file = {};
-			var attributes = {
+			file = {};
+			attributes = {
 				file:      file,
 				uploading: true,
 				date:      new Date(),
@@ -86,18 +110,19 @@
 				multipart_string += unescape(encodeURIComponent(send_data[name])) + crlf;
 			}
 			
-			var match = img.src.match( /data:([a-z0-9\/]+);base64,(.+)$/ );
-			mime_type = match[1];
-			file_contents = match[2];
-			filename = filename || 'upload'
-			var suffix = suffix_from_mime(mime_type);
-			if ( filename.split('.').pop() != suffix )
-				filename += '.'+suffix;
+			filename = filename || 'upload';
+			
+			// get contents, mime, suffix
+			filedata = file_data_from_datasrc( img.src );
+			
+			// make sure we have the correct suffix
+			if ( filename.split('.').pop() != filedata.suffix )
+				filename += '.'+filedata.suffix;
 			
 			multipart_string += dashdash + boundary + crlf +
-				'Content-Disposition: form-data; name="' + wp.Uploader.defaults.file_data_name + '"; filename="' + filename + '"' + crlf +
-				'Content-Type: ' + mime_type + crlf +
-					crlf + atob( file_contents ) + crlf +
+				'Content-Disposition: form-data; name="' + file_data_name + '"; filename="' + filename + '"' + crlf +
+				'Content-Type: ' + filedata.mime_type + crlf +
+					crlf + atob( filedata.contents ) + crlf +
 					dashdash + boundary + dashdash + crlf;
 			
 			//*

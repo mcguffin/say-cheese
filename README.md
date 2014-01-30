@@ -18,3 +18,8 @@ ToDo:
  - iOS6 support as here: http://www.purplesquirrels.com.au/2013/08/webcam-to-canvas-or-data-uri-with-html5-and-javascript/
  - add MSIE support
  - explain why not safari
+
+
+Issues:
+-------
+ - take snapshot on uninitialized camera possible

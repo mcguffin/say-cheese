@@ -56,6 +56,7 @@
 		
 //		this.on( 'content:render:record', this.recordRender, this );
 		this.on( 'close', this.dismissContent, this );
+		console.log('set events '+(new Date().getTime()));
 		frame = this;
 	};
 	media.view.MediaFrame.Post.prototype.contentRender = function( content ){
@@ -179,7 +180,8 @@
 					self.controller.trigger('action:create:dataimage', self , self._webcam.snapshot() );
 					return false;
 				});
-			this._webcam = cheese.create_webcam_recorder( this._recorder );
+			if ( ! this._webcam )
+				this._webcam = cheese.create_webcam_recorder( this._recorder );
 			
 			this._recorder.hide();
 		},
@@ -189,12 +191,6 @@
 			// camera running
 			// camera error
 			// camera waiting
-		},
-		record_mode : function(){
-			// remove image, append video
-		},
-		upload_mode : function(){
-			// remove video, append image
 		},
 		start : function() {
 			this._recorder.show();
@@ -226,10 +222,11 @@
 				<label class="setting"><span>'+l10n.title+'</span><input class="alignment" type="text" data-setting="title" value="'+this.title+'" /></label>\
 				<a href="#" class="image-upload button-primary"><span class="dashicons dashicons-yes"></span>'+l10n.upload+'</a>\
 			</div></div>');
-		$(document).on( 'click' , '.image-discard' , function(event){
+		
+		this.$el.on( 'click' , '.image-discard' , function(event){
 			self.controller.trigger( 'action:discard:dataimage' , self );
 		} );
-		$(document).on( 'click' , '.image-upload' , function(event){
+		this.$el.on( 'click' , '.image-upload' , function(event){
 			self.controller.trigger( 'action:upload:dataimage' , self );
 		} );
 		

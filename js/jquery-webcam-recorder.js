@@ -25,9 +25,9 @@
 		}
 		var width,height;
 		this.state = 'waiting';
+		self.trigger('statechange');
 		
 		this.start = function() {
-			self.trigger('statechange');
 				
 			navigator.getUserMedia({
 				video: settings.camera,
@@ -43,7 +43,7 @@
 				
 				// Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
 				// See crbug.com/110938.
-				videoElement.addEventListener('playing', function(e) {
+				$(videoElement).on('playing', function(e) {
 					width = width || videoElement.videoWidth;
 					height = height || videoElement.videoHeight;
 					self.state = 'recording';
@@ -56,10 +56,13 @@
 					console.log('User declined permissions.');
 				}
 			});
+			this.state = 'started';
+			self.trigger('statechange');
 		}
 		this.stop = function() {
 			if ( !! stream )
 				stream.stop();
+			$(videoElement).off('playing');
 			videoElement.src = null;
 			self.state = 'stopped';
 			self.trigger('statechange');
