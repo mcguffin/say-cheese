@@ -50,9 +50,9 @@
 			webcam_recording: !!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)
 		},
 		
-		create_webcam_recorder : function( parent ){
-			return $.create_recorder_element()
-				.appendTo(parent)
+		create_webcam_recorder : function( parent ) {
+			console.log($(parent).closest('html').length);
+			return $(parent)
 				.recorder({
 					camera:{mandatory:{
 						minWidth: 640,
@@ -161,4 +161,6 @@
 		}
 	};
 	exports.cheese = cheese;
+	if ( ! exports.guid )
+		exports.guid = guid;
 })(jQuery,window);

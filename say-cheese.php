@@ -15,7 +15,7 @@ Domain Path: /lang/
 
 function cheese_admin_init() {
 	wp_register_script( 'canvas-to-blob' , plugins_url( 'js/canvas-to-blob.min.js' , __FILE__ ) , array() , '2.0.5' );
-	wp_register_script( 'jquery-webcam-recorder' , plugins_url( 'js/jquery-webcam-recorder.js' , __FILE__ ) , array( 'jquery' , 'canvas-to-blob' ) , '0.0.1' );
+	wp_register_script( 'jquery-webcam-recorder' , plugins_url( 'js/jquery-webcam-recorder.js' , __FILE__ ) , array( 'jquery' , 'canvas-to-blob' , 'swfobject' ) , '0.0.1' );
 	wp_register_script( 'jquery-pasteboard' , plugins_url( 'js/jquery.pasteboard.js' , __FILE__ ) , array( 'jquery' ) , '0.0.1' );
 	wp_register_script( 'cheese' , plugins_url( 'js/cheese.js' , __FILE__ ) , array( 'jquery' ) , '0.0.1' );
 	wp_register_script( 'cheese-media-view' , plugins_url( 'js/media-view.js' , __FILE__ ) , array('media-editor' , 'jquery-webcam-recorder' , 'jquery-pasteboard' , 'cheese' ) , '0.0.1' );

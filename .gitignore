@@ -5,3 +5,10 @@
 *.swp
 *.out
 .svn/
+.actionScriptProperties
+.flexProperties
+.project
+.settings
+src/bin-*
+src/html-template
+src/libs
