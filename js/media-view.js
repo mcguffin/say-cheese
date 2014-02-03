@@ -54,9 +54,9 @@
 		this.on( 'action:upload:dataimage' , this.uploadDataImage , this );
 		// upload triggered: upload to server ... 
 		
+		
 //		this.on( 'content:render:record', this.recordRender, this );
 		this.on( 'close', this.dismissContent, this );
-		console.log('set events '+(new Date().getTime()));
 		frame = this;
 	};
 	media.view.MediaFrame.Post.prototype.contentRender = function( content ){
@@ -89,7 +89,7 @@
 	media.view.MediaFrame.Post.prototype.discardDataImage = function( img ) {
 		img.$el.remove();
 
-		if ( this.content.mode() == 'record' && !! recorderContent )
+		if ( this.content.mode() != 'started' && !! recorderContent )
 			recorderContent.start();
 		else if ( this.content.mode() == 'pasteboard' && !! pasteContent )
 			pasteContent.start();
@@ -143,7 +143,6 @@
 					}
 				})
 				.on('pasteimage' , '' , function( e , data ){
-					console.log(data);
 					self.controller.trigger('action:create:dataimage', self , data );
 					return false;
 				} )
@@ -164,6 +163,7 @@
 		controller:null,
 		_webcam : null,
 		_recorder : null,
+		_instruments : null,
 		
 		initialize: function() {
 			_.defaults( this.options, {
@@ -171,19 +171,47 @@
 			var self = this;
 
 
-			this._recorder = $('<div class="recorder"><div class="instruments">\
-					<a href="#" class="recorder-record button-primary"><span class="dashicons dashicons-video-alt2"></span>'+l10n.record+'</a>\
-				</div></div>')
+			this._recorder = $('<div class="recorder"></div>')
 				.appendTo( this.$el )
 				.on('click','.recorder-record',function(event){
 					event.preventDefault( );
 					self.controller.trigger('action:create:dataimage', self , self._webcam.snapshot() );
 					return false;
 				});
-			if ( ! this._webcam )
-				this._webcam = cheese.create_webcam_recorder( this._recorder );
+			this._instruments = $('<div class="instruments">\
+					<a href="#" class="recorder-record button-primary"><span class="dashicons dashicons-video-alt2"></span>'+l10n.record+'</a>\
+				</div>')
+				.appendTo(this._recorder);
 			
-			this._recorder.hide();
+			if ( ! this._webcam ) {
+				this._webcam = cheese.create_webcam_recorder( this._recorder , {
+						flash : {
+							swf_url : l10n.swf_url
+						}
+					});
+				this._webcam.on('recorder:state:ready' , function(e){
+					console.log('event',e.type);
+					setTimeout( function(){self.start()} , 50 );
+				} ); // html5 fires on create. Bad...
+				this._webcam.on('recorder:state:waiting',function(e){
+					console.log('event',e.type);
+					self._instruments.hide();
+				});
+				this._webcam.on('recorder:state:started',function(e){ 
+					console.log('event',e.type);
+					self._instruments.show();
+				});
+				this._webcam.on('recorder:state:error',function(e){
+					console.log('event',e.type);
+					self._instruments.hide();
+				});
+				this._webcam.on('recorder:state:stopped',function(e){
+					console.log('event',e.type);
+					self._instruments.hide();
+				});
+			}
+			
+			this._instruments.hide();
 		},
 		get_state : function() {
 			return this._webcam.state;
@@ -193,13 +221,11 @@
 			// camera waiting
 		},
 		start : function() {
-			this._recorder.show();
 			this._webcam.start();
 			return this;
 		},
 		stop : function(){
 			this._webcam.stop();
-			this._recorder.hide();
 			return this;
 		}
 	});

@@ -23,17 +23,13 @@ package WebcamRecorder
 			_video = new Video(640,480);
 			this.addChild(_video);
 			
-			_camera = Camera.getCamera(); //Camera.names[0]);
-			_camera.setMode(640, 480, 15);
-			_camera.setQuality(0, 80);
-			_camera.addEventListener(StatusEvent.STATUS, camera_status);
 			
 			if (ExternalInterface.available) {
 				ExternalInterface.addCallback('startcam',this.startcam);
 				ExternalInterface.addCallback('stopcam',this.stopcam);
 				ExternalInterface.addCallback('snapshot',this.snapshot);
 			}
-			this.statechange('waiting');
+			this.statechange('ready');
 			/*
 			// testing by keyboard shortcuts
 			var self = this;
@@ -56,8 +52,21 @@ package WebcamRecorder
 			});
 			*/
 		}
+		private function setCamera() {
+			if ( ! this._camera ) {
+				this._camera = Camera.getCamera(); //Camera.names[0]);
+				this._camera.setMode(640, 480, 15);
+				this._camera.setQuality(0, 80);
+				this._camera.addEventListener(StatusEvent.STATUS, camera_status);
+				
+			}
+		}
 		private function startcam():void{
-			this._video.attachCamera(_camera);
+			this.setCamera();
+			this._video.attachCamera(this._camera);
+			this.statechange('waiting');
+			if ( ! this._camera.muted )
+				this.statechange('started');
 		}
 		private function stopcam():void{
 			this._video.attachCamera(null);
@@ -68,10 +77,12 @@ package WebcamRecorder
 			return 'data:image/png;base64,' + ImageSnapshot.encodeImageAsBase64(captured);
 		}
 		private function camera_status(e:StatusEvent):void {
-			if (e.code=='Camera.Unmuted')
+			if (e.code=='Camera.Unmuted') {
 				this.statechange('started');
-			else
+			} else {
 				this.statechange('error');
+				this.stopcam();
+			}
 		}
 		private function statechange(state:String):void{
 			try {

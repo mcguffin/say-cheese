@@ -9,7 +9,6 @@
 
 	$.extend( wp.Uploader.prototype, {
 		success : function( file_attachment ){
-			console.log(file_attachment);
 		}
 	});
 
@@ -47,19 +46,20 @@
 		supports : {
 			upload_data_url: !!xhr && !!(xhr.sendAsBinary || (window.Uint8Array && window.ArrayBuffer)),
 			paste: ('paste' in document) || ('onpaste' in document) || typeof(window.onpaste) === 'object',
-			webcam_recording: !!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)
+			webcam_recording: $.recorder.supported,//!!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)
 		},
 		
-		create_webcam_recorder : function( parent ) {
-			console.log($(parent).closest('html').length);
-			return $(parent)
-				.recorder({
+		create_webcam_recorder : function( parent , options ) {
+			
+			$.extend( true , options || {} , {
 					camera:{mandatory:{
 						minWidth: 640,
 						minHeight: 480
 					}},
 					microphone:false
 				});
+			return $(parent)
+				.recorder(options);
 		},
 		
 		// upload_data_url: 

@@ -1,5 +1,18 @@
+
 (function($,exports){
-	var stream = null, s,minFlashVersion = "12.0.0", counter=0;
+	// extend jquery
+	if ( ! $.fn.outerHTML ) {
+		$.extend( $.fn , {outerHTML : function(){
+			return $('<div>').append(this.clone()).html();
+		}});
+	}
+	if ( ! $.fn.inDOM ) {
+		$.extend( $.fn , {inDOM : function(){
+			return jQuery.contains(document, this[0]);
+		}});
+	}
+	
+	var stream = null, s,minFlashVersion = "11.2.0", counter=0;
 
 	exports.guid = function() {
 		var guid = new Date().getTime().toString(32), i;
@@ -16,38 +29,32 @@
 	// check canvas, canvas context 2d, canvas toDataUrl support
 	
 	//
-	// create event
 	//
-	CreateEvent = function ( id , ref ) {
-		this.ref = ref;
-		this.id = id;
-		this.type = 'recorder:create';
-	}
-	$.extend(CreateEvent.prototype,$.Event('recorder:create'),{
-		id : null,
-		ref : undefined,
-		type : 'recorder:create'
-	});
-	//
-	// create event
-	//
+	$.extend( $ , { recorder : {
+		 supported : false 
+	}});
 	$.fn.recorder = function( options ) {
 		// this: jquery object || dom element
 		
 		var $self = this;
 		$.extend( this , $.fn.recorder.prototype );
 		
-		this.options = $.extend({
+		this.options = $.extend( true , {
 			camera : true,
-			microphone : false
+			microphone : false,
+			flash : {
+				swf_url : 'WebcamRecorder.swf'
+			}
 		},options);
 		
 		
-		this.on('recorder:create',function( e ){
+		this.on('recorder:create',function( e , element ){
 			// e.ref -> html element ... objct, embed, video, ...
 			// append to self.append
-			if ( ! $self.element )
-				$self.element = $(e.ref).appendTo($self).get(0);
+			if ( ! $self.element ) {
+				$self.element = element;
+				$(element).appendTo($self).get(0);
+			}
 		});
 		this.create();
 		return this;
@@ -55,20 +62,41 @@
 	
 	$.extend($.fn.recorder.prototype,{
 		element : null,
-		state : null,
+		state : false,
 		create : function(){},
 		start : function() {},
 		stop : function(){},
 		snapshot : function(){}
 	});
+	/*
+	events
+	- recorder:create
+	- recorder:state:ready
+	- recorder:state:waiting
+	- recorder:state:started
+	- recorder:state:error
+	- recorder:state:stopped
 	
+	function callback( event , recorderElement [, state] ){
+	}
+	*/
+	// recorder state 
 	var recorder_modules = {
 		html5 : {
+			supported : !!(window.URL && window.URL.createObjectURL) &&  // url supported
+						(function(){ // canvas supported
+							var elem = document.createElement('canvas');
+							return !!(elem.getContext && elem.getContext('2d'));
+						})() &&
+						!!navigator.getUserMedia,
+			
 			create : function() {
+				var $self = this;
 				var id = "html5-webcam-recorder-"+window.guid();
 				var html = '<video class="webcam-recorder" width="640" height="480" id="'+id+'" autoplay="autoplay"></video>';
-				var event = new CreateEvent( id , $(html).get(0) );
-				this.trigger( event );
+				
+				this.trigger( $.Event('recorder:create') , $(html).get(0) );
+				setTimeout(function(){$self.trigger(  $.Event('recorder:state:ready') , $self.element , 'ready' );},20);
 			},
 			start : function(){
 				var $self = this;
@@ -87,21 +115,21 @@
 				
 					// Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
 					// See crbug.com/110938.
-					$(this.element).on('playing', function(e) {
-						width = width || this.element.videoWidth;
-						height = height || this.element.videoHeight;
-						self.state = 'recording';
-						self.trigger('recorder:statechange');
+					$($self.element).on('playing', function(e) {
+						width = width || $self.element.videoWidth;
+						height = height || $self.element.videoHeight;
+						self.state = 'started';
+						$self.trigger( $.Event('recorder:state:started') , $self.element );
 					});
 				}.bind(this), function(e) { 
 					self.state = 'error';
-					self.trigger('recorder:statechange');
+					$self.trigger( $.Event('recorder:state:error') , $self.element );
 					if (e.code === 1) {
 						console.log('User declined permissions.');
 					}
 				});
-				this.state = 'started';
-				this.trigger('recorder:statechange');
+				this.state = 'waiting';
+				$self.trigger( $.Event('recorder:state:waiting') , $self.element );
 			},
 			stop : function(){
 				if ( !! stream )
@@ -109,7 +137,7 @@
 				$(this.element).off('playing');
 				this.element.src = null;
 				this.state = 'stopped';
-				this.trigger('recorder:statechange');
+				$self.trigger( $.Event('recorder:state:stopped') , $self.element );
 			},
 			snapshot : function(){
 				var width,height;
@@ -126,131 +154,69 @@
 					$canvas.remove();
 					return dataSrc;
 				}
-			},
-			supported : !!(window.URL && window.URL.createObjectURL) &&  // url supported
-						(function(){ // canvas supported
-							var elem = document.createElement('canvas');
-							return !!(elem.getContext && elem.getContext('2d'));
-						})() &&
-						!!navigator.getUserMedia
+			}
 		},
 	
 		flash : {
+			supported : swfobject && swfobject.hasFlashPlayerVersion(minFlashVersion),
+
+			id : null,
 			create : function(){
 				var $self = this,
-					id = $self.attr('id') || "flash-webcam-recorder-"+window.guid();
+					$detached = null,el;
 				
-				if ( ! $self.attr('id') )
-					$self.attr( 'id' , id );
+				this.id = "flash-webcam-recorder-"+window.guid()
 				
 				window.statechange = function(arg) {
-					console.log(arg);
-					this.state = arg;
+					$self.state = arg;
+					$self.trigger( $.Event('recorder:state:'+arg) , $self.element );
 				}
 				
-				var width=640,height=480,swfurl,
-					xiURL=false,
-					flashvars = {},
-					param = {
-						allowscriptaccess : 'always'
-					},
-					attr = {},
-					callback = function(e){
-						console.log('flash trigger create ',e,e.ref);
-						if ( e.success ) {
-							$self.element = e.ref;
-							$self.trigger( new CreateEvent( e.id , e.ref ) );
-						}
-					};
-				swfurl = '../js/WebcamRecorder.swf';
-
-				swfobject.embedSWF( swfurl , id , width , height , minFlashVersion , xiURL , flashvars , param , attr , callback );
-				// attach events?
+				var $elem = $('<div><div id="'+this.id+'" /></div>');
+				$self.trigger( $.Event('recorder:create') , $elem );
+				
+				// we need to wait until the palceholder div get attached to the DOM before we can embedSWF() it.
+				var create_swf_interval = setInterval(function() {
+					if ( $('#'+$self.id).inDOM() ) {
+						var width=640,height=480,
+							xiURL=false,
+							flashvars = {},
+							param = {
+								'allowscriptaccess'	: 'always',
+								'wmode'				: 'opaque',
+							},
+							attr = {},
+							callback = function(e) {
+								if ( e.success ) {
+									$self.element = e.ref;
+								}
+							};
+						swfobject.embedSWF( $self.options.flash.swf_url , $self.id , width , height , minFlashVersion , xiURL , flashvars , param , attr , callback );
+						clearInterval(create_swf_interval);
+					}
+				},100);
 			},
-			start : function(){
-				if ( this.element )
-					this.element.startcam();
+			start : function() {
+				return this.element.startcam( );
 			},
 			stop : function(){
-				if ( this.element )
-					this.element.stopcam();
+				return this.element.stopcam( );
 			},
 			snapshot : function(){
-				if ( this.element )
-					return this.element.snapshot();
-			},
-			supported : swfobject && swfobject.hasFlashPlayerVersion(minFlashVersion)
+				return this.element.snapshot();
+			}
+			
 		}
 	}
-	recorder_modules.html5.supported=false;
 	for (s in recorder_modules) {
 		if ( recorder_modules[s].supported ) {
 			$.extend( $.fn.recorder.prototype , recorder_modules[s] );
-			$.fn.recorder.supported = true;
+			$.recorder.supported = true;
 			break;
 		}
 	}
-	/*
-	
-	var recorder = {
-		create_element : function(){
-			
-		},
-		supported : false ,
-		
-		html5 : $.extend({
-		
-		},default_recorder),
-		
-		
-		flash : $.extend({
-			create_element : function() {
-				swfobject.embedSWF( swfSrc , id , width , height , version , xiURL , vars , param , attr , callback );
-			},
-			supported : swfobject && swfobject.hasFlashPlayerVersion('10.0.0')
-		},default_recorder)
-	};
-	
-	
-	*/
+
 	
 	// iOS6 support see: http://www.purplesquirrels.com.au/2013/08/webcam-to-canvas-or-data-uri-with-html5-and-javascript/
-	
-	
-	
-	
-	// check canvas, canvas context 2d, canvas toDataUrl support
-	// check navigator.getusermedia support
-	// 
-	
-	/*
-	$.fn.recorder = function( options ) {
-		var settings = $.extend({
-			camera:true,
-			microphone:false
-		},options ) , self = this;
 
-		videoElement = this.get(0);
-
-		if ( ! navigator.getUserMedia ) {
-			console.log('Your browser doesn\'t support ScreenCast.');
-			return this;
-		}
-		var width,height;
-		this.state = 'waiting';
-		self.trigger('statechange');
-		
-		this.start = function() {
-			
-		}
-		this.stop = function() {
-		}
-		this.snapshot = function() {
-			// replaces video with img
-		}
-		
-		
-		return this;
-	}
-	*/
 })(jQuery,window);

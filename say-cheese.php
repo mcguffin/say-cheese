@@ -31,6 +31,7 @@ function cheese_admin_init() {
 		'paste_instructions' => __('Paste some image Data from your clipboard','cheese'),
 		'paste_error_no_image' => __('No image data pasted.','cheese'),
 		'paste_error_webkit_fake_image' => __('Your Browser does not support pasting processable image data.','cheese'),
+		'swf_url' =>  plugins_url( 'js/WebcamRecorder.swf' , __FILE__ ),
 	) );
 
 	wp_register_style( 'cheese' , plugins_url( 'css/cheese.css' , __FILE__ ) , array( ) , '0.0.1' );
