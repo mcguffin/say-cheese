@@ -54,6 +54,7 @@
 										self.trigger( 'pasteimage' , src );
 									} else {
 										// trigger error
+										// see https://bugs.webkit.org/show_bug.cgi?id=49141 webkit-fake-url
 										$trgt.text(options.messages.no_processible_image_pasted);
 										return;
 									}

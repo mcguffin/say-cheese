@@ -79,14 +79,17 @@ recorder:
 
 
 
-
+.recorder-inline-content,
 .pasteboard-inline-content {
     position: absolute;
     top: 30%;
     left: 0px;
     right: 0px;
 }
-
+.recorder-inline-content {
+	text-align:center;
+}
+.recorder-inline-content h3,
 .pasteboard-inline-content h3 {
     font-size: 20px;
     line-height: 28px;

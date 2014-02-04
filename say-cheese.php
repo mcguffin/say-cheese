@@ -31,6 +31,8 @@ function cheese_admin_init() {
 		'paste_instructions' => __('Paste some image Data from your clipboard','cheese'),
 		'paste_error_no_image' => __('No image data pasted.','cheese'),
 		'paste_error_webkit_fake_image' => __('Your Browser does not support pasting processable image data.','cheese'),
+		'please_allow_camera_message' => __( 'Please allow camera access in your browser.' , 'cheese' ),
+		'an_error_occured' => __( 'An error occured.' , 'cheese' ),
 		'swf_url' =>  plugins_url( 'js/WebcamRecorder.swf' , __FILE__ ),
 	) );
 

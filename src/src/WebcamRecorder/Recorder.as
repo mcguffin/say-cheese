@@ -7,6 +7,8 @@ package WebcamRecorder
 	import flash.external.ExternalInterface;
 	import flash.media.Camera;
 	import flash.media.Video;
+	import flash.system.Security;
+	import flash.system.SecurityPanel;
 	
 	import mx.graphics.ImageSnapshot;
 	
@@ -52,7 +54,7 @@ package WebcamRecorder
 			});
 			*/
 		}
-		private function setCamera() {
+		private function setCamera():void {
 			if ( ! this._camera ) {
 				this._camera = Camera.getCamera(); //Camera.names[0]);
 				this._camera.setMode(640, 480, 15);
@@ -67,6 +69,8 @@ package WebcamRecorder
 			this.statechange('waiting');
 			if ( ! this._camera.muted )
 				this.statechange('started');
+			else 
+				Security.showSettings(SecurityPanel.PRIVACY);
 		}
 		private function stopcam():void{
 			this._video.attachCamera(null);
@@ -80,8 +84,8 @@ package WebcamRecorder
 			if (e.code=='Camera.Unmuted') {
 				this.statechange('started');
 			} else {
-				this.statechange('error');
-				this.stopcam();
+				this.statechange('permissionerror');
+//				this.stopcam();
 			}
 		}
 		private function statechange(state:String):void{

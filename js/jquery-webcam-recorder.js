@@ -129,9 +129,10 @@
 					});
 				}.bind(this), function(e) { 
 					$self.state = 'error';
-					$self.trigger( $.Event('recorder:state:error') , $self.element );
-					if (e.code === 1) {
-						console.log('User declined permissions.');
+					if ( e.code === 1 || e.name == "PermissionDeniedError" ) {
+						$self.trigger( $.Event('recorder:state:permissionerror') , $self.element );
+					} else {
+						$self.trigger( $.Event('recorder:state:error') , $self.element );
 					}
 				});
 				this.state = 'waiting';
@@ -203,7 +204,7 @@
 				},100);
 			},
 			start : function() {
-				if ( this.state == 'ready' )
+				if ( this.state == 'ready' || this.state == 'error' || this.state == 'permissionerror' )
 					return this.element.startcam( );
 				else 
 					this.one('recorder:state:ready',function(e){ e.stopPropagation();this.start(); });

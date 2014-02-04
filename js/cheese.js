@@ -31,11 +31,11 @@
 	}
 	
 	function file_data_from_datasrc( src ) {
-			var match = src.match( /data:([a-z0-9\/]+);base64,(.+)$/ );
-			mime_type = match[1];
-			file_contents = match[2];
+		var regex = /data:([a-z0-9\/]+);base64,/im;
+		var match = src.match( regex );
 		return {
-			contents : match[2],
+			// ie adds developer friendly line breaks into datasource urls. Better we remove them here.
+			contents : src.replace(regex,'').split('\r').join('').split('\n').join(''),
 			mime_type : match[1],
 			suffix : suffix_from_mime( match[1] )
 		}
@@ -124,7 +124,7 @@
 				'Content-Type: ' + filedata.mime_type + crlf +
 					crlf + atob( filedata.contents ) + crlf +
 					dashdash + boundary + dashdash + crlf;
-			
+						
 			//*
 			xhr.open("post", wp.Uploader.defaults.url, true);
 			xhr.setRequestHeader('Content-Type', 'multipart/form-data; boundary=' + boundary);

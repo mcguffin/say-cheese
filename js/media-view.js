@@ -142,7 +142,10 @@
 					<a href="#" class="recorder-record button-primary"><span class="dashicons dashicons-video-alt2"></span>'+l10n.record+'</a>\
 				</div>')
 				.appendTo(this._recorder);
-			
+			this.$el.on('click','.error-try-again',function(){
+				self.start();
+				self.$el.find('.error').remove();
+			});
 			if ( ! this._webcam ) {
 				this._webcam = cheese.create_webcam_recorder( this._recorder , {
 						flash : {
@@ -162,7 +165,13 @@
 					self._instruments.show();
 				});
 				this._webcam.on('recorder:state:error',function(e){
-					console.log('event',e.type);
+					console.log('error event',e.type);
+					self.$el.append('<div class="error recorder-inline-content"><h3>'+l10n.an_error_occured+'</h3><p><a class="error-try-again" href="#">'+l10n.try_again+'</a></p></div>');
+					self._instruments.hide();
+				});
+				this._webcam.on('recorder:state:permissionerror',function(e){
+					self.$el.append('<div class="error recorder-inline-content"><h3>'+l10n.please_allow_camera_message+'</h3><p><a class="error-try-again" href="#">'+l10n.try_again+'</a></p></div>');
+					console.log(msg.inDOM());
 					self._instruments.hide();
 				});
 				this._webcam.on('recorder:state:stopped',function(e){
