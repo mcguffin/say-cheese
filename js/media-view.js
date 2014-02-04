@@ -43,11 +43,13 @@
 		// parent handlers
 		bindHandlers.apply( this, arguments );
 		// add recorder create handler.
+		this.on( 'content:create:record', this.contentCreateRecord, this );
+		this.on( 'content:create:pasteboard', this.contentCreatePasteboard, this );
+
 		this.on( 'content:render', this.contentRender, this );
 		this.on( 'content:render:record', this.contentRenderRecord, this );
 		this.on( 'content:render:pasteboard', this.contentRenderPasteboard, this );
-		this.on( 'content:create:record', this.contentCreateRecord, this );
-		this.on( 'content:create:pasteboard', this.contentCreatePasteboard, this );
+		
 		
 		this.on( 'action:create:dataimage' , this.createDataImage , this );
 		this.on( 'action:discard:dataimage' , this.discardDataImage , this );
@@ -59,7 +61,17 @@
 		this.on( 'close', this.dismissContent, this );
 		frame = this;
 	};
-	media.view.MediaFrame.Post.prototype.contentRender = function( content ){
+	media.view.MediaFrame.Post.prototype.contentCreateRecord = function( content ){
+		var state = this.state();
+		this.$el.removeClass('hide-toolbar');
+		recorderContent = content.view = new media.view.WebcamRecorder({controller:this});
+	}
+	media.view.MediaFrame.Post.prototype.contentCreatePasteboard = function( content ){
+		var state = this.state();
+		this.$el.removeClass('hide-toolbar');
+		pasteContent = content.view = new media.view.Pasteboard({controller:this});
+	}
+	media.view.MediaFrame.Post.prototype.contentRender = function( content ) {
 		if ( !! recorderContent && this.content.mode() != 'record' )
 			recorderContent.stop();
 		if ( !! pasteContent && this.content.mode() != 'pasteboard' )
@@ -74,11 +86,6 @@
 			recorderContent.start();
 		this._current = recorderContent;
 	}
-	media.view.MediaFrame.Post.prototype.contentCreateRecord = function( content ){
-		var state = this.state();
-		this.$el.removeClass('hide-toolbar');
-		recorderContent = content.view = new media.view.WebcamRecorder({controller:this});
-	}
 	
 	
 	media.view.MediaFrame.Post.prototype.createDataImage = function( view , imagedata ) {
@@ -88,11 +95,7 @@
 	}
 	media.view.MediaFrame.Post.prototype.discardDataImage = function( img ) {
 		img.$el.remove();
-
-		if ( this.content.mode() != 'started' && !! recorderContent )
-			recorderContent.start();
-		else if ( this.content.mode() == 'pasteboard' && !! pasteContent )
-			pasteContent.start();
+		this._current && this._current.start && this._current.start();
 	}
 	media.view.MediaFrame.Post.prototype.uploadDataImage = function( img ) {
 		cheese.send_img(img.get_img(),img.get_title(),frame);
@@ -105,55 +108,11 @@
 	
 	
 	
-	media.view.MediaFrame.Post.prototype.contentCreatePasteboard = function( content ){
-		var state = this.state();
-		this.$el.removeClass('hide-toolbar');
-		pasteContent = content.view = new media.view.Pasteboard({controller:this});
-	}
 	
 	
 	
 	
 	
-	media.view.Pasteboard = media.View.extend({
-		tagName:   'div',
-		className: 'pasteboard',
-		controller:null,
-		_content : null,
-		_pasteboard : null,
-		
-		initialize: function() {
-			_.defaults( this.options, {
-			});
-			var self = this;
-			
-			this._content = $('<div class="pasteboard-inline-content"><h3>'+l10n.paste_instructions+'</h3></div>')
-				.appendTo(this.$el);
-			this._pasteboard = $('<div id="pasteboard-injector"></div>')
-				.appendTo(this._content);
-			
-		},
-		start : function(){
-			var self = this;
-			this._pasteboard
-				.imagepastebox({
-					messages : {
-						no_image_pasted : l10n.paste_error_no_image,
-						no_processible_image_pasted : l10n.paste_error_webkit_fake_image,
-					}
-				})
-				.on('pasteimage' , '' , function( e , data ){
-					self.controller.trigger('action:create:dataimage', self , data );
-					return false;
-				} )
-				.focus();
-		},
-		stop : function(){
-			this._pasteboard
-				.imagepastebox('off')
-				.off('pasteimage');
-		}
-	});
 
 	
 	
@@ -173,9 +132,10 @@
 
 			this._recorder = $('<div class="recorder"></div>')
 				.appendTo( this.$el )
-				.on('click','.recorder-record',function(event){
+				.on('click','.recorder-record',function(event) {
 					event.preventDefault( );
 					self.controller.trigger('action:create:dataimage', self , self._webcam.snapshot() );
+					self.stop();
 					return false;
 				});
 			this._instruments = $('<div class="instruments">\
@@ -221,15 +181,60 @@
 			// camera waiting
 		},
 		start : function() {
+			var self = this;
+			if ( ! this._recorder.is(':visible') )
+				this._recorder.show();
 			this._webcam.start();
+//			console.log(this._recorder,this._webcam.start,this._webcam.start());
 			return this;
 		},
 		stop : function(){
 			this._webcam.stop();
+			if ( this._recorder.is(':visible') )
+				this._recorder.hide();
 			return this;
 		}
 	});
 	
+	media.view.Pasteboard = media.View.extend({
+		tagName:   'div',
+		className: 'pasteboard',
+		controller:null,
+		_content : null,
+		_pasteboard : null,
+		
+		initialize: function() {
+			_.defaults( this.options, {
+			});
+			var self = this;
+			
+			this._content = $('<div class="pasteboard-inline-content"><h3>'+l10n.paste_instructions+'</h3></div>')
+				.appendTo(this.$el);
+			this._pasteboard = $('<div id="pasteboard-injector"></div>')
+				.appendTo(this._content);
+			
+		},
+		start : function(){
+			var self = this;
+			this._pasteboard
+				.imagepastebox({
+					messages : {
+						no_image_pasted : l10n.paste_error_no_image,
+						no_processible_image_pasted : l10n.paste_error_webkit_fake_image,
+					}
+				})
+				.on('pasteimage' , '' , function( e , data ){
+					self.controller.trigger('action:create:dataimage', self , data );
+					return false;
+				} )
+				.focus();
+		},
+		stop : function(){
+			this._pasteboard
+				.imagepastebox('off')
+				.off('pasteimage');
+		}
+	});
 
 	media.view.DataSourceImage = function( options ) {
 		_.defaults( options , {

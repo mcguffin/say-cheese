@@ -1,6 +1,9 @@
 
 (function($,exports){
 	// extend jquery
+	
+	console.log(navigator.userAgent);
+	
 	if ( ! $.fn.outerHTML ) {
 		$.extend( $.fn , {outerHTML : function(){
 			return $('<div>').append(this.clone()).html();
@@ -12,7 +15,8 @@
 		}});
 	}
 	
-	var stream = null, s,minFlashVersion = "11.2.0", counter=0;
+	var stream = null, s,minFlashVersion = "11.2.0", 
+		counter=0;
 
 	exports.guid = function() {
 		var guid = new Date().getTime().toString(32), i;
@@ -42,9 +46,12 @@
 		this.options = $.extend( true , {
 			camera : true,
 			microphone : false,
+			width : 640,
+			height : 480,
 			flash : {
 				swf_url : 'WebcamRecorder.swf'
-			}
+			},
+			html5 : {}
 		},options);
 		
 		
@@ -93,7 +100,7 @@
 			create : function() {
 				var $self = this;
 				var id = "html5-webcam-recorder-"+window.guid();
-				var html = '<video class="webcam-recorder" width="640" height="480" id="'+id+'" autoplay="autoplay"></video>';
+				var html = '<video class="webcam-recorder" width="'+$self.options.width+'" height="'+$self.options.height+'" id="'+id+'" autoplay="autoplay"></video>';
 				
 				this.trigger( $.Event('recorder:create') , $(html).get(0) );
 				setTimeout(function(){$self.trigger(  $.Event('recorder:state:ready') , $self.element , 'ready' );},20);
@@ -115,21 +122,20 @@
 				
 					// Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
 					// See crbug.com/110938.
-					$($self.element).on('playing', function(e) {
-						width = width || $self.element.videoWidth;
-						height = height || $self.element.videoHeight;
+					$(this.element).on('playing', function(e) {
 						self.state = 'started';
 						$self.trigger( $.Event('recorder:state:started') , $self.element );
+						
 					});
 				}.bind(this), function(e) { 
-					self.state = 'error';
+					$self.state = 'error';
 					$self.trigger( $.Event('recorder:state:error') , $self.element );
 					if (e.code === 1) {
 						console.log('User declined permissions.');
 					}
 				});
 				this.state = 'waiting';
-				$self.trigger( $.Event('recorder:state:waiting') , $self.element );
+				this.trigger( $.Event('recorder:state:waiting') , this.element );
 			},
 			stop : function(){
 				if ( !! stream )
@@ -137,7 +143,7 @@
 				$(this.element).off('playing');
 				this.element.src = null;
 				this.state = 'stopped';
-				$self.trigger( $.Event('recorder:state:stopped') , $self.element );
+				this.trigger( $.Event('recorder:state:stopped') , this.element );
 			},
 			snapshot : function(){
 				var width,height;
@@ -197,10 +203,15 @@
 				},100);
 			},
 			start : function() {
-				return this.element.startcam( );
+				if ( this.state == 'ready' )
+					return this.element.startcam( );
+				else 
+					this.one('recorder:state:ready',function(e){ e.stopPropagation();this.start(); });
 			},
-			stop : function(){
-				return this.element.stopcam( );
+			stop : function() {
+				try {
+					return this.element.stopcam( );
+				} catch(err){}
 			},
 			snapshot : function(){
 				return this.element.snapshot();
