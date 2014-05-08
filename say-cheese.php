@@ -7,6 +7,7 @@ Description: Add Media through Webcam and Copy Paste
 Author: Jörn Lund
 Version: 0.0.3
 Author URI: https://github.com/mcguffin/
+License: GPL2
 
 Text Domain: cheese
 Domain Path: /lang/
