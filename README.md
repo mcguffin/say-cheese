@@ -6,7 +6,8 @@ Take a webcam snapshot or paste image data and upload it into the WordPress Medi
  
 
  - Developed in WP 3.8
-   Should work with WordPress 3.5+
+ - Last tested in WP 4.0-beta3
+ - Should work with WordPress 3.5+
  
  - German localization.
 
