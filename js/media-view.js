@@ -1,6 +1,6 @@
 (function($,window){
 	var media       = wp.media,
-		bindHandlers = media.view.MediaFrame.Post.prototype.bindHandlers,
+		bindHandlers = media.view.MediaFrame.Select.prototype.bindHandlers,
 		cheese = window.cheese,
 		l10n, recorderContent , pasteContent;
 
@@ -9,7 +9,7 @@
 	l10n = media.view.l10n = typeof _wpMediaViewsL10n === 'undefined' ? {} : _wpMediaViewsL10n;
 	l10n = _.extend(l10n,cheese_l10n);
 	// override media input methods.
-	media.view.MediaFrame.Post.prototype.browseRouter = function( view ) {
+	media.view.MediaFrame.Select.prototype.browseRouter = function( view ) {
 		var set_data = {};
 		set_data.upload = {
 			text:     l10n.uploadFilesTitle,
@@ -39,7 +39,7 @@
 	};
 	
 	
-	media.view.MediaFrame.Post.prototype.bindHandlers = function() {
+	media.view.MediaFrame.Select.prototype.bindHandlers = function() {
 		// parent handlers
 		bindHandlers.apply( this, arguments );
 		// add recorder create handler.
@@ -61,48 +61,48 @@
 		this.on( 'close', this.dismissContent, this );
 		frame = this;
 	};
-	media.view.MediaFrame.Post.prototype.contentCreateRecord = function( content ){
+	media.view.MediaFrame.Select.prototype.contentCreateRecord = function( content ){
 		var state = this.state();
 		this.$el.removeClass('hide-toolbar');
 		recorderContent = content.view = new media.view.WebcamRecorder({controller:this});
 	}
-	media.view.MediaFrame.Post.prototype.contentCreatePasteboard = function( content ){
+	media.view.MediaFrame.Select.prototype.contentCreatePasteboard = function( content ){
 		var state = this.state();
 		this.$el.removeClass('hide-toolbar');
 		pasteContent = content.view = new media.view.Pasteboard({controller:this});
 	}
-	media.view.MediaFrame.Post.prototype.contentRender = function( content ) {
+	media.view.MediaFrame.Select.prototype.contentRender = function( content ) {
 		if ( !! recorderContent && this.content.mode() != 'record' )
 			recorderContent.stop();
 		if ( !! pasteContent && this.content.mode() != 'pasteboard' )
 			pasteContent.stop();
 	}
-	media.view.MediaFrame.Post.prototype.contentRenderPasteboard = function( content ){
+	media.view.MediaFrame.Select.prototype.contentRenderPasteboard = function( content ){
 		pasteContent.start();
 		this._current = pasteContent;
 	}
-	media.view.MediaFrame.Post.prototype.contentRenderRecord = function( content ){
+	media.view.MediaFrame.Select.prototype.contentRenderRecord = function( content ){
 		if (recorderContent.get_state() in {waiting:1,error:1})
 			recorderContent.start();
 		this._current = recorderContent;
 	}
 	
 	
-	media.view.MediaFrame.Post.prototype.createDataImage = function( view , imagedata ) {
+	media.view.MediaFrame.Select.prototype.createDataImage = function( view , imagedata ) {
 		this.dismissContent(); // || paste stop
 		var img = new media.view.DataSourceImage({ imagedata:imagedata , controller:this });
 		view.$el.append(img.$el);
 	}
-	media.view.MediaFrame.Post.prototype.discardDataImage = function( img ) {
+	media.view.MediaFrame.Select.prototype.discardDataImage = function( img ) {
 		img.$el.remove();
 		this._current && this._current.start && this._current.start();
 	}
-	media.view.MediaFrame.Post.prototype.uploadDataImage = function( img ) {
+	media.view.MediaFrame.Select.prototype.uploadDataImage = function( img ) {
 		cheese.send_img(img.get_img(),img.get_title(),frame);
 		img.done_upload();
 	}
 	
-	media.view.MediaFrame.Post.prototype.dismissContent = function( content ) {
+	media.view.MediaFrame.Select.prototype.dismissContent = function( content ) {
 		this._current && this._current.stop && this._current.stop();
 	}
 	
