@@ -149,13 +149,17 @@
 			}
 			
 			if (xhr.sendAsBinary) { // Gecko
-				xhr.sendAsBinary(multipart_string);
+				xhr.sendAsBinary( multipart_string );
 			} else { // WebKit with typed arrays support
 				var ui8a = new Uint8Array(multipart_string.length);
 				for (var i = 0; i < multipart_string.length; i++) {
 					ui8a[i] = (multipart_string.charCodeAt(i) & 0xff);
 				}
-				xhr.send(ui8a.buffer);
+				try {
+					xhr.send(ui8a);
+				} catch ( err ) {
+					xhr.send(ui8a.buffer);
+				}
 			}
 			
 		}
