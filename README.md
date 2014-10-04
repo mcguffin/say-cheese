@@ -11,27 +11,29 @@ Take a webcam snapshot or paste image data and upload it into the WordPress Medi
 
 Browser Support
 ---------------
-Snapshot is proofed to be working in Chrome 32+ and Firefox 26+. 
-Safari and IE11+ users are offered a flash fallback.
+*Snapshot* is proofed to be working on Chrome 32+ and Firefox 26+. 
+Safari and IE11+ users will see a flash fallback.
 
-Clipboard pasting works well in Firefox 26+ and Chrome 32+ 
-Safari does [some weird things](https://bugs.webkit.org/show_bug.cgi?id=49141) with 
+In Mobile Safari the Snapshot feature is already implemented through the systems file upload dialog. 
+
+*Clipboard pasting* works well in Firefox 26+ and Chrome 32+ 
+
+Safari makes [some weird things](https://bugs.webkit.org/show_bug.cgi?id=49141) with 
 pasted images. It seems impossible to predict such behaviour (unless somebody can answer me
 [this question](http://stackoverflow.com/questions/21366465/is-there-a-way-to-detect-webkit-fake-url-browser-behavior)), 
-so the only thing that will appear after pasting an image from the clipboard is an error message.
+so the only thing that will appear after pasting an image from the clipboard will be an error message.
 
-In IE pasting images is simply not supported.
+
+In IE pasting images is not supported.
+
 
 Mobile:
 -------
 Tested in 
  - Firefox mobile. (Snapshot)
- 
 
 
 ToDo:
 -----
- - iOS6 support: http://www.purplesquirrels.com.au/2013/08/webcam-to-canvas-or-data-uri-with-html5-and-javascript/
- - add MSIE support
  - disable paste in safari. Requires an answer for [this question](http://stackoverflow.com/questions/21366465/is-there-a-way-to-detect-webkit-fake-url-browser-behavior).
 
