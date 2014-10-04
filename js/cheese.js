@@ -68,7 +68,7 @@
 				send_data, dashdash, crlf, multipart_string, 
 				file_data_name, name, value, filename, mime_type, xhr;
 			
-			if ( ! this.supports.upload_data_url ) {	
+			if ( ! this.supports.upload_data_url ) {
 				console.log('Upload not supported');
 				return false;
 			}

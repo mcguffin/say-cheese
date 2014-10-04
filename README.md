@@ -3,12 +3,10 @@ Say Cheese
 
 Take a webcam snapshot or paste image data and upload it into the WordPress Media Library.
 
- 
 
  - Developed in WP 3.8
- - Last tested in WP 4.0-beta3
+ - Last tested in WP 4.1-alpha
  - Should work with WordPress 3.5+
- 
  - German localization.
 
 Browser Support

@@ -22,6 +22,8 @@
 					text:     l10n.webcam_record,
 					priority: 30
 				};
+			} else {
+				console.log('Webcam access not supported');
 			}
 			// if paste recording supported
 			if ( cheese.supports.paste ) {
@@ -29,6 +31,8 @@
 					text:     l10n.copy_paste,
 					priority: 35
 				};
+			} else {
+				console.log('Paste not supported');
 			}
 		}
 		set_data.browse = {

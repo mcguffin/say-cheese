@@ -1,9 +1,5 @@
-
 (function($,exports){
 	// extend jquery
-	
-	console.log(navigator.userAgent);
-	
 	if ( ! $.fn.outerHTML ) {
 		$.extend( $.fn , {outerHTML : function(){
 			return $('<div>').append(this.clone()).html();
@@ -163,7 +159,6 @@
 				}
 			}
 		},
-	
 		flash : {
 			supported : swfobject && swfobject.hasFlashPlayerVersion(minFlashVersion),
 
