@@ -49,7 +49,6 @@
 								if ( imgs.length ) {
 									img = imgs.get(0);
 									src = img.src;
-									console.log(imgs.length,src);
 									if ( src.match(/^data:/) ) {
 										self.trigger( 'pasteimage' , src );
 									} else {
@@ -114,7 +113,6 @@
 						// need to wait for clipboard data to arrive
 						wait(event);
 					}
-					console.log(waiting);
 					
 					waiting || event.preventDefault();
 				})
