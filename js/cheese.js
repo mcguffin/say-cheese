@@ -45,8 +45,8 @@
 		
 		supports : {
 			upload_data_url: !!xhr && !!(xhr.sendAsBinary || (window.Uint8Array && window.ArrayBuffer)),
-			paste: ('paste' in document) || ('onpaste' in document) || typeof(window.onpaste) === 'object',
-			webcam_recording: $.recorder.supported,//!!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)
+			paste: cheese_l10n.enable_pasteboard && (('paste' in document) || ('onpaste' in document) || typeof(window.onpaste) === 'object'),
+			webcam_recording: cheese_l10n.enable_snapshot && $.recorder.supported,//!!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)
 		},
 		
 		create_webcam_recorder : function( parent , options ) {

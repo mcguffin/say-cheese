@@ -35,6 +35,8 @@ function cheese_admin_init() {
 		'please_allow_camera_message' => __( 'Please allow camera access in your browser.' , 'cheese' ),
 		'an_error_occured' => __( 'An error occured.' , 'cheese' ),
 		'swf_url' =>  plugins_url( 'js/WebcamRecorder.swf' , __FILE__ ),
+		'enable_snapshot' => apply_filters( 'saycheese_enable_snapshot' , true ),
+		'enable_pasteboard' => apply_filters( 'saycheese_enable_pasteboard' , true ),
 	) );
 
 	wp_register_style( 'cheese' , plugins_url( 'css/cheese.css' , __FILE__ ) , array( ) , '0.0.1' );
