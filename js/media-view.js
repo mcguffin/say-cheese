@@ -241,15 +241,23 @@
 					return false;
 				} )
 				.focus();
+			this._content.show();
 		},
 		stop : function(){
 			this._pasteboard
 				.imagepastebox('off')
 				.off('pasteimage');
+			this._content.hide();
 		}
 	});
 
 	media.view.DataSourceImage = function( options ) {
+		function get_hw_string(src) {
+			var theImage = new Image();
+			theImage.src = src;
+			return  theImage.width && theImage.height  ? ' width="'+theImage.width+'" height="'+theImage.height+'" ':'';
+		}
+		
 		_.defaults( options , {
 			title: l10n.image,
 			imagedata: null,
@@ -257,10 +265,10 @@
 			_image:null,
 		} );
 		_.defaults( this , options );
-		var self = this;
-
+		var self = this,
+			hw_string = '';//get_hw_string( this.imagedata );
 		this.$el = $('<div class="data-source-image">\
-			<img src="'+this.imagedata+'" />\
+			<img src="'+this.imagedata+'" '+hw_string+'/>\
 			<div class="instruments">\
 				<a href="#" class="image-discard button-secondary"><span class="dashicons dashicons-arrow-left"></span>'+l10n.try_again+'</a>\
 				<label class="setting"><span>'+l10n.title+'</span><input class="alignment" type="text" data-setting="title" value="'+this.title+'" /></label>\

@@ -52,13 +52,24 @@ recorder:
 	margin:1em auto;
 }
 .data-source-image {
+	margin:0 auto;
+	width:0;
+	min-width:620px;
 	max-width:100%;
+	
 	height:auto;
+	min-height:104px;
+	max-height:100%;
 }
 .data-source-image img {
+/* 
 	width:100%;
+	min-width:
+ */
+ 	width:auto;
 	max-width:100%;
 	height:auto;
+	max-height:100%;
 }
 .webcam-recorder .data-source-image,
 .recorder {
