@@ -16,6 +16,7 @@
 	}
 	
 	
+	
 	$.fn.extend({
 		imagepastebox : function(args){
 			
@@ -36,24 +37,39 @@
 						$trgt = $(event.target), wait, pasted, waiting = false;
 					
 					
+
 					wait = function(event){
 						
-						var loops=0, interval, src, imgs;
+						var loops=0, interval, src, $imgs;
 						
+						function drawToCanvas( img ) {
+							try {
+								var w=$(img).width(), h=$(img).height(),
+									canvas = $('<canvas width="'+w+'" height="'+h+'" />').appendTo('body').get(0),
+									ctx=canvas.getContext("2d");
+								ctx.drawImage(img,0,0);
+								// FF will throw a security error here, for images coming from different domains.
+								src = canvas.toDataURL();
+								return true;
+							} catch(err){
+								return false;
+							}
+						}
 						waiting = true;
 						interval = setInterval(function(){
-							var imgs = $trgt.find('img');
-							if ( imgs.length || (++loops)>10) {
+							var $imgs = $trgt.find('img');
+							if ( $imgs.length || (++loops)>10) {
 								clearInterval(interval);
 								waiting = false;
-								if ( imgs.length ) {
-									img = imgs.get(0);
+								if ( $imgs.length ) {
+									img = $imgs.get(0);
 									src = img.src;
-									if ( src.match(/^data:/) ) {
+									if ( src.match(/^data:/) || drawToCanvas( img ) ) {
 										self.trigger( 'pasteimage' , src );
 									} else {
 										// trigger error
 										// see https://bugs.webkit.org/show_bug.cgi?id=49141 webkit-fake-url
+										// 
 										$trgt.text(options.messages.no_processible_image_pasted);
 										return;
 									}
@@ -69,9 +85,9 @@
 						- pasting files from finder result in type=text/plain; data=[filename]
 					
 					*/
-					
 					if ( clipboardData.types.length ) {
 						$.each(clipboardData.types,function(i,type){
+							var $img, dataSrc;
 							if ( type == 'Files' && clipboardData.items) {
 								pasted = clipboardData.items[i].getAsFile();
 								reader = new FileReader();
@@ -86,16 +102,17 @@
 									// file like image data, need to process dataurl
 									wait(event);
 									return false; // break each()
+								} else if ( matches = pasted.match(/(^|src=")(data:.*)("|$)/) ) {
+									self.trigger( 'pasteimage' , matches[2] );
+									return false; // break each()
 								} else if ( type == 'text/html' ) {
 									// check pasted data, if data source image trigger paste-image 
-								
 									
-									if ( matches = pasted.match(/src="(data:.*)"/) ) {
-										self.trigger( 'pasteimage' , matches[1] );
-										return false; // break each()
-									} else if ( pasted.match(/<img/)  ) {
-										self.text(options.messages.no_processible_image_pasted);
+									if ( pasted.match(/<img/) ) {
+										// regular image. wait until it can be handled in the DOM.
+										wait(event);
 									} else {
+										// propably no image.
 										self.text(options.messages.no_image_pasted);
 									}
 								} else if ( type == 'text/plain' ) {
@@ -113,7 +130,6 @@
 						// need to wait for clipboard data to arrive
 						wait(event);
 					}
-					
 					waiting || event.preventDefault();
 				})
 				.attr('contenteditable','true')
