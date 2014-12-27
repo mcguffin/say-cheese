@@ -37,6 +37,17 @@ Mobile:
 Tested in 
  - Firefox mobile. (Snapshot)
 
+Filters:
+--------
+There are two filters allowing you to programmatically disable the plugin features.
+
+    // will disable pasting images
+    add_filter('saycheese_enable_pasteboard','__return_false');
+
+    // will disable webcam snapshots
+    add_filter('saycheese_enable_snapshot','__return_false');
+
+
 ToDo:
 -----
  - disable paste in safari. Requires an answer for [this question](http://stackoverflow.com/questions/21366465/is-there-a-way-to-detect-webkit-fake-url-browser-behavior).
