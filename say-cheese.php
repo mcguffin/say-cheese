@@ -43,16 +43,16 @@ function cheese_admin_init() {
 }
 add_action( 'admin_init' , 'cheese_admin_init');
 
-function cheese_loaded(){
+function cheese_loaded() {
 	load_plugin_textdomain( 'cheese', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 }
 add_action( 'plugins_loaded' , 'cheese_loaded');
 
 
 function cheese_load() {
-	wp_enqueue_media( );
+	if ( ! did_action('wp_enqueue_media') ) 
+		wp_enqueue_media();
 	wp_enqueue_script( 'cheese-media-view');
 	wp_enqueue_style( 'cheese' );
 }
-add_action( 'load-post.php' , 'cheese_load');
-add_action( 'load-post-new.php' , 'cheese_load');
+add_action( 'wp_enqueue_media' , 'cheese_load' );
