@@ -5,12 +5,11 @@ Plugin Name: Say Cheese
 Plugin URI: https://github.com/mcguffin/say-cheese/
 Description: Add Media through Webcam and Copy Paste
 Author: Jörn Lund
-Version: 0.0.3
+Version: 0.0.4
 Author URI: https://github.com/mcguffin/
 License: GPL2
 
 Text Domain: cheese
-Domain Path: /lang/
 */
 
 
@@ -44,7 +43,7 @@ function cheese_admin_init() {
 add_action( 'admin_init' , 'cheese_admin_init');
 
 function cheese_loaded() {
-	load_plugin_textdomain( 'cheese', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
+	load_plugin_textdomain( 'cheese', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 }
 add_action( 'plugins_loaded' , 'cheese_loaded');
 
