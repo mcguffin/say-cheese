@@ -1,0 +1,110 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Say Cheese v0.0.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2014-12-28 10:42+0800\n"
+"Last-Translator: Piet Bos <piet@so-wp.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.7.1\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2\n"
+"X-Poedit-Basepath: ../\n"
+"X-Textdomain-Support: yes\n"
+"Language: nl_NL\n"
+"X-Poedit-SearchPath-0: .\n"
+
+# @ cheese
+#. translators: plugin header field 'Name'
+#: say-cheese.php:0
+msgid "Say Cheese"
+msgstr "Say Cheese"
+
+# @ cheese
+#. translators: plugin header field 'PluginURI'
+#: say-cheese.php:0
+msgid "https://github.com/mcguffin/say-cheese/"
+msgstr "https://github.com/mcguffin/say-cheese/"
+
+# @ cheese
+#. translators: plugin header field 'Description'
+#: say-cheese.php:0
+msgid "Add Media through Webcam"
+msgstr "﻿Toevoegen van Media via Webcam"
+
+# @ cheese
+#. translators: plugin header field 'Author'
+#: say-cheese.php:0
+msgid "Jörn Lund"
+msgstr "Jörn Lund"
+
+# @ cheese
+#. translators: plugin header field 'AuthorURI'
+#: say-cheese.php:0
+msgid "https://github.com/mcguffin/"
+msgstr "https://github.com/mcguffin/"
+
+# @ cheese
+#. translators: plugin header field 'Version'
+#: say-cheese.php:0
+msgid "0.0.2"
+msgstr "0.0.2"
+
+# @ cheese
+#: say-cheese.php:23
+msgid "Webcam Record"
+msgstr "Opnemen via Webcam"
+
+# @ cheese
+#: say-cheese.php:24
+msgid "Try again"
+msgstr "﻿Probeer opnieuw"
+
+# @ cheese
+#: say-cheese.php:25
+msgid "Upload"
+msgstr "﻿Uploaden"
+
+# @ cheese
+#: say-cheese.php:26
+msgid "Record"
+msgstr "Opnemen"
+
+# @ default
+#: say-cheese.php:27
+msgid "Title"
+msgstr "﻿Titel"
+
+# @ cheese
+#: say-cheese.php:28
+msgid "Snapshot"
+msgstr "Snapshot"
+
+# @ cheese
+#: say-cheese.php:29
+msgid "Paste from Clipboard"
+msgstr "﻿Plakken vanaf clipboard"
+
+# @ default
+#: say-cheese.php:30
+msgid "Image"
+msgstr "﻿Afbeelding"
+
+# @ cheese
+#: say-cheese.php:31
+msgid "Paste some image Data from your clipboard"
+msgstr "Plak afbeelding gegevens vanaf het clipboard"
+
+# @ cheese
+#: say-cheese.php:32
+msgid "No image data pasted."
+msgstr "﻿Geen afbeeldingsgegevens geplakt."
+
+# @ cheese
+#: say-cheese.php:33
+msgid "Your Browser does not support pasting processable image data."
+msgstr "﻿Uw Browser ondersteunt niet het plakken van verwerkbare afbeeldingsgegevens."
