@@ -52,7 +52,7 @@ ToDo:
 -----
  - disable paste in safari. Requires an answer for [this question](http://stackoverflow.com/questions/21366465/is-there-a-way-to-detect-webkit-fake-url-browser-behavior).
  - open library tab after upload
-
+ - media options: enable Paste / enable Webcam
 
 Support
 -------

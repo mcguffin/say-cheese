@@ -17,7 +17,7 @@ function cheese_admin_init() {
 	wp_register_script( 'jquery-pasteboard' , plugins_url( 'js/jquery.pasteboard.js' , __FILE__ ) , array( 'jquery' ) , '0.0.1' );
 	wp_register_script( 'cheese' , plugins_url( 'js/cheese.js' , __FILE__ ) , array( 'jquery' ) , '0.0.1' );
 	wp_register_script( 'cheese-media-view' , plugins_url( 'js/media-view.js' , __FILE__ ) , array('media-editor' , 'jquery-webcam-recorder' , 'jquery-pasteboard' , 'cheese' ) , '0.0.1' );
-	wp_localize_script( 'cheese-media-view' , 'cheese_l10n' , array(
+	wp_localize_script( 'cheese' , 'cheese_l10n' , array(
 		'webcam_record' => __('Webcam Record' , 'say-cheese' ),
 		'try_again' => __('Try again' , 'say-cheese' ),
 		'upload' => __('Upload' , 'say-cheese' ),
