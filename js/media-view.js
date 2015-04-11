@@ -1,6 +1,7 @@
 (function($,window){
 	var media       = wp.media,
 		bindHandlers = media.view.MediaFrame.Select.prototype.bindHandlers,
+		browseRouter = media.view.MediaFrame.Select.prototype.browseRouter,
 		cheese = window.cheese,
 		l10n, recorderContent , pasteContent;
 
@@ -8,13 +9,11 @@
 
 	l10n = media.view.l10n = typeof _wpMediaViewsL10n === 'undefined' ? {} : _wpMediaViewsL10n;
 	l10n = _.extend(l10n,cheese_l10n);
-	// override media input methods.
+	
+	// extend media input methods.
 	media.view.MediaFrame.Select.prototype.browseRouter = function( view ) {
+		browseRouter.apply(this,arguments);
 		var set_data = {};
-		set_data.upload = {
-			text:     l10n.uploadFilesTitle,
-			priority: 20
-		};
 		if (cheese.supports.upload_data_url) {
 			// if webcam recording supported
 			if ( cheese.supports.webcam_recording ) {
@@ -35,10 +34,6 @@
 				console.log('Paste not supported');
 			}
 		}
-		set_data.browse = {
-			text:     l10n.mediaLibraryTitle,
-			priority: 40
-		};
 		view.set(set_data);
 	};
 	
@@ -90,6 +85,10 @@
 			recorderContent.start();
 		this._current = recorderContent;
 	}
+	media.view.MediaFrame.Select.prototype.dismissContent = function( content ) {
+		this._current && this._current.stop && this._current.stop();
+	}
+	
 	
 	
 	media.view.MediaFrame.Select.prototype.createDataImage = function( view , imagedata ) {
@@ -104,10 +103,6 @@
 	media.view.MediaFrame.Select.prototype.uploadDataImage = function( img ) {
 		cheese.send_img(img.get_img(),img.get_title(),frame);
 		img.done_upload();
-	}
-	
-	media.view.MediaFrame.Select.prototype.dismissContent = function( content ) {
-		this._current && this._current.stop && this._current.stop();
 	}
 	
 	
