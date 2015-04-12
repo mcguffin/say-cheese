@@ -46,15 +46,18 @@ There are two filters allowing you to programmatically disable the plugin featur
     // will disable webcam snapshots
     add_filter('saycheese_enable_snapshot','__return_false');
 
-
 ToDo:
 -----
  - disable paste in safari. Requires an answer for [this question](http://stackoverflow.com/questions/21366465/is-there-a-way-to-detect-webkit-fake-url-browser-behavior).
  - open library tab after upload
  - media options: enable Paste / enable Webcam
- - Modals: 
+ - Upload option Format:  ( ) png, ( ) jpeg (paste: defaults to pasted data, record: defaults to jpeg)
+ - Modal views: 
  	- set title
  	- use default file names for paste and snapshot
+ 	- avoid scrolling
+ - Documentation
+ 	- Matrix copy-from / browser+os -> result
 
 Support
 -------
