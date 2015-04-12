@@ -1,124 +1,152 @@
-(function($,window){
-	var media       = wp.media,
-		bindHandlers = media.view.MediaFrame.Select.prototype.bindHandlers,
-		browseRouter = media.view.MediaFrame.Select.prototype.browseRouter,
-		cheese = window.cheese,
-		l10n, recorderContent , pasteContent;
+(function($,window,o){
+	var cheese = window.cheese,
+		media  = wp.media,
+		Button = media.view.Button,
+		Modal  = media.view.Modal,
+		l10n   = media.view.l10n = typeof _wpMediaViewsL10n === 'undefined' ? {} : _wpMediaViewsL10n,
+		mediaFrame;
 
-	var webcamRecorder,frame,$video,is_video;
-
-	l10n = media.view.l10n = typeof _wpMediaViewsL10n === 'undefined' ? {} : _wpMediaViewsL10n;
 	l10n = _.extend(l10n,cheese_l10n);
 	
-	// extend media input methods.
-	media.view.MediaFrame.Select.prototype.browseRouter = function( view ) {
-		browseRouter.apply(this,arguments);
-		var set_data = {};
-		if (cheese.supports.upload_data_url) {
-			// if webcam recording supported
-			if ( cheese.supports.webcam_recording ) {
-				set_data.record = {
-					text:     l10n.webcam_record,
-					priority: 30
-				};
-			} else {
-				console.log('Webcam access not supported');
-			}
-			// if paste recording supported
-			if ( cheese.supports.paste ) {
-				set_data.pasteboard = {
-					text:     l10n.copy_paste,
-					priority: 35
-				};
-			} else {
-				console.log('Paste not supported');
-			}
+	var oldMFInit = wp.media.view.MediaFrame.prototype.initialize;
+	wp.media.view.MediaFrame.prototype.initialize = function() {
+		mediaFrame = this;
+		oldMFInit.apply(this,arguments);
+	}
+	
+	media.view.NameInput = media.View.extend({
+		tagName:   'label',
+		className: 'setting',
+		_input : null,
+		
+		initialize:function() {
+			_.defaults( this.options, {
+				defaultValue : 'untitled',
+				title:l10n.title,
+			});
+			this._input = $('<input class="alignment" type="text" data-setting="title" />');
+			this.$el
+				.append('<span>'+this.options.title+'</span>')
+				.append(this._input);
+		},
+		render : function() {
+			if ( ! this._input.val() )
+				this._input.val( this.options.defaultValue );
+		},
+		val : function(){
+			var v = this._input.val();
+			return v || this.options.defaultValue;//l10n.image;
 		}
-		view.set(set_data);
-	};
+	});
 	
 	
-	media.view.MediaFrame.Select.prototype.bindHandlers = function() {
-		// parent handlers
-		bindHandlers.apply( this, arguments );
-		// add recorder create handler.
-		this.on( 'content:create:record', this.contentCreateRecord, this );
-		this.on( 'content:create:pasteboard', this.contentCreatePasteboard, this );
-
-		this.on( 'content:render', this.contentRender, this );
-		this.on( 'content:render:record', this.contentRenderRecord, this );
-		this.on( 'content:render:pasteboard', this.contentRenderPasteboard, this );
-		
-		
-		this.on( 'action:create:dataimage' , this.createDataImage , this );
-		this.on( 'action:discard:dataimage' , this.discardDataImage , this );
-		this.on( 'action:upload:dataimage' , this.uploadDataImage , this );
-		// upload triggered: upload to server ... 
-		
-		
-//		this.on( 'content:render:record', this.recordRender, this );
-		this.on( 'close', this.dismissContent, this );
-		frame = this;
-	};
-	media.view.MediaFrame.Select.prototype.contentCreateRecord = function( content ){
-		var state = this.state();
-		this.$el.removeClass('hide-toolbar');
-		recorderContent = content.view = new media.view.WebcamRecorder({controller:this});
-	}
-	media.view.MediaFrame.Select.prototype.contentCreatePasteboard = function( content ){
-		var state = this.state();
-		this.$el.removeClass('hide-toolbar');
-		pasteContent = content.view = new media.view.Pasteboard({controller:this});
-	}
-	media.view.MediaFrame.Select.prototype.contentRender = function( content ) {
-		if ( !! recorderContent && this.content.mode() != 'record' )
-			recorderContent.stop();
-		if ( !! pasteContent && this.content.mode() != 'pasteboard' )
-			pasteContent.stop();
-	}
-	media.view.MediaFrame.Select.prototype.contentRenderPasteboard = function( content ){
-		pasteContent.start();
-		this._current = pasteContent;
-	}
-	media.view.MediaFrame.Select.prototype.contentRenderRecord = function( content ){
-		if (recorderContent.get_state() in {waiting:1,error:1})
-			recorderContent.start();
-		this._current = recorderContent;
-	}
-	media.view.MediaFrame.Select.prototype.dismissContent = function( content ) {
-		this._current && this._current.stop && this._current.stop();
-	}
-	
-	
-	
-	media.view.MediaFrame.Select.prototype.createDataImage = function( view , imagedata ) {
-		this.dismissContent(); // || paste stop
-		var img = new media.view.DataSourceImage({ imagedata:imagedata , controller:this });
-		view.$el.append(img.$el);
-	}
-	media.view.MediaFrame.Select.prototype.discardDataImage = function( img ) {
-		img.$el.remove();
-		this._current && this._current.start && this._current.start();
-	}
-	media.view.MediaFrame.Select.prototype.uploadDataImage = function( img ) {
-		cheese.send_img(img.get_img(),img.get_title(),frame);
-		img.done_upload();
-	}
-	
-	
-	
-	
-	
-	
-	
+	media.view.ActionButton = media.view.Button.extend({
+		dashicon : 'yes',
+		render : function(){
+			_.defaults( this.options, {
+				dashicon : 'yes',
+			});
+			media.view.Button.prototype.render.apply(this,arguments);
+			this.$el.addClass('button-action');
+			this.$el.prepend('<span class="dashicons dashicons-'+this.options.dashicon+'"></span>');
+		}
+	});
 	
 
+	media.view.DataSourceImageUploader = media.View.extend({
+		tagName:   'div',
+		className: 'data-source-image',
+		controller:null,
+		image : null,
+		discardBtn : null,
+		nameInput : null,
+		uploadBtn : null,
+		
+		uploader : null,
+		
+		initialize : function() {
+			_.defaults( this.options, {
+			});
+			var self = this;
+
+			var instr = new media.View({
+				tagName    : 'div',
+				className  : 'instruments',
+				controller : this
+			});
+			this.discardBtn = new media.view.ActionButton({
+				className : 'image-discard',
+				style:'secondary',
+				text : l10n.try_again,
+				dashicon : 'arrow-left',
+				controller:this,
+				click:function(){ self.discardImage.apply(self,arguments); }
+			});
+			this.nameInput = new media.view.NameInput({
+				defaultValue : l10n.image
+			});
+			this.uploadBtn = new media.view.ActionButton({
+				className : 'image-upload',
+				style:'primary',
+				text : l10n.upload,
+				controller:this,
+				click:function(){ self.uploadImage.apply(self,arguments); }
+			});
+			
+			
+			this.views.add(instr);
+			instr.views.add( this.discardBtn );
+			instr.views.add(this.nameInput);
+			instr.views.add( this.uploadBtn );
+		},
+		setImageData : function( data ) {
+			var container = this.$el.find('.image-container').html('').get(0);
+			if ( this.image ) 
+				this.image.destroy();
+			
+			this.image = new o.Image();
+			this.image.onload = function() {
+				this.embed( container , { type:'image/png' } );
+			}
+			this.image.load( data );
+			return this;
+		},
+		render : function() {
+			this.$el.prepend('<span class="image-container" />');
+		},
+		discardImage : function(){
+			this.controller.trigger( 'action:discard:dataimage' , this );
+		},
+		uploadImage : function() {
+			var blob = this.image.getAsBlob( 'image/png' ),
+				self = this, uploader = new wp.Uploader();
+			blob.detach(blob.getSource());
+			blob.name = this.nameInput.val() + '.png';
+			mediaFrame.uploader.uploader.uploader.addFile( blob , this.nameInput.val() + '.png' );
+			
+			var oldSuccess = mediaFrame.uploader.uploader.success;
+			mediaFrame.uploader.uploader.success = function(){
+				self.controller.trigger( 'action:uploaded:dataimage' );
+				mediaFrame.uploader.uploader.success = oldSuccess;
+			}
+		},
+		show:function(){
+			this.$el.show();
+			return this;
+		},
+		hide:function(){
+			this.$el.hide();
+			return this;
+		}
+	});
+	
 	
 	
 	media.view.WebcamRecorder = media.View.extend({
 		tagName:   'div',
 		className: 'webcam-recorder',
 		controller:null,
+		action:'record',
 		_webcam : null,
 		_recorder : null,
 		_instruments : null,
@@ -138,7 +166,7 @@
 					return false;
 				});
 			this._instruments = $('<div class="instruments">\
-					<a href="#" class="recorder-record button-primary"><span class="dashicons dashicons-video-alt2"></span>'+l10n.record+'</a>\
+					<a href="#" class="button recorder-record button-primary button-action"><span class="dashicons dashicons-video-alt2"></span>'+l10n.record+'</a>\
 				</div>')
 				.appendTo(this._recorder);
 			this.$el.on('click','.error-try-again',function(){
@@ -146,35 +174,36 @@
 				self.$el.find('.error').remove();
 			});
 			if ( ! this._webcam ) {
-				this._webcam = cheese.create_webcam_recorder( this._recorder , {
+				var recorderOptions = {
+						camera:{mandatory:{
+							minWidth: 640,
+							minHeight: 480
+						}},
+						microphone:false,
 						flash : {
 							swf_url : l10n.swf_url
 						}
-					});
+					};
+				this._webcam = $(this._recorder).recorder(recorderOptions);
+			
 				this._webcam.on('recorder:state:ready' , function(e){
-					console.log('event',e.type);
-					setTimeout( function(){self.start()} , 50 );
+// 					setTimeout( function(){self.start()} , 50 );
 				} ); // html5 fires on create. Bad...
 				this._webcam.on('recorder:state:waiting',function(e){
-					console.log('event',e.type);
 					self._instruments.hide();
 				});
 				this._webcam.on('recorder:state:started',function(e){ 
-					console.log('event',e.type);
 					self._instruments.show();
 				});
 				this._webcam.on('recorder:state:error',function(e){
-					console.log('error event',e.type);
 					self.$el.append('<div class="error recorder-inline-content"><h3>'+l10n.an_error_occured+'</h3><p><a class="error-try-again" href="#">'+l10n.try_again+'</a></p></div>');
 					self._instruments.hide();
 				});
 				this._webcam.on('recorder:state:permissionerror',function(e){
 					self.$el.append('<div class="error recorder-inline-content"><h3>'+l10n.please_allow_camera_message+'</h3><p><a class="error-try-again" href="#">'+l10n.try_again+'</a></p></div>');
-					console.log(msg.inDOM());
 					self._instruments.hide();
 				});
 				this._webcam.on('recorder:state:stopped',function(e){
-					console.log('event',e.type);
 					self._instruments.hide();
 				});
 			}
@@ -193,13 +222,20 @@
 			if ( ! this._recorder.is(':visible') )
 				this._recorder.show();
 			this._webcam.start();
-//			console.log(this._recorder,this._webcam.start,this._webcam.start());
 			return this;
 		},
 		stop : function(){
 			this._webcam.stop();
 			if ( this._recorder.is(':visible') )
 				this._recorder.hide();
+			return this;
+		},
+		show:function(){
+			this.$el.show();
+			return this;
+		},
+		hide:function(){
+			this.$el.hide();
 			return this;
 		}
 	});
@@ -208,6 +244,7 @@
 		tagName:   'div',
 		className: 'pasteboard',
 		controller:null,
+		action:'paste',
 		_content : null,
 		_pasteboard : null,
 		
@@ -237,55 +274,115 @@
 				} )
 				.focus();
 			this._content.show();
+			return this;
 		},
 		stop : function(){
 			this._pasteboard
 				.imagepastebox('off')
 				.off('pasteimage');
 			this._content.hide();
+			return this;
+		},
+		show:function(){
+			this.$el.show();
+			return this;
+		},
+		hide:function(){
+			this.$el.hide();
+			return this;
 		}
 	});
 
-	media.view.DataSourceImage = function( options ) {
-		function get_hw_string(src) {
-			var theImage = new Image();
-			theImage.src = src;
-			return  theImage.width && theImage.height  ? ' width="'+theImage.width+'" height="'+theImage.height+'" ':'';
-		}
+	media.view.DataSourceImageGrabber = media.View.extend({
+		tagName:   'div',
+		className : 'image-grabber',
 		
-		_.defaults( options , {
-			title: l10n.image,
-			imagedata: null,
-			controller: null,
-			_image:null,
-		} );
-		_.defaults( this , options );
-		var self = this,
-			hw_string = '';//get_hw_string( this.imagedata );
-		this.$el = $('<div class="data-source-image">\
-			<img src="'+this.imagedata+'" '+hw_string+'/>\
-			<div class="instruments">\
-				<a href="#" class="image-discard button-secondary"><span class="dashicons dashicons-arrow-left"></span>'+l10n.try_again+'</a>\
-				<label class="setting"><span>'+l10n.title+'</span><input class="alignment" type="text" data-setting="title" value="'+this.title+'" /></label>\
-				<a href="#" class="image-upload button-primary"><span class="dashicons dashicons-yes"></span>'+l10n.upload+'</a>\
-			</div></div>');
+		_grabber : null,
+		_uploader : null,
 		
-		this.$el.on( 'click' , '.image-discard' , function(event){
-			self.controller.trigger( 'action:discard:dataimage' , self );
-		} );
-		this.$el.on( 'click' , '.image-upload' , function(event){
-			self.controller.trigger( 'action:upload:dataimage' , self );
-		} );
-		
-		this.get_img = function(){
-			return this.$el.find('img')[0];
+		initialize : function() {
+			_.defaults( this.options, {
+				grabber : media.view.WebcamRecorder
+			});
+			this._grabber  = new this.options.grabber({controller:this});
+			this._uploader = new media.view.DataSourceImageUploader({controller:this});
+			this.views.add(this._grabber);
+			this.views.add(this._uploader);
+			
+			this.on( 'action:create:dataimage' , this.imageCreated );
+			this.on( 'action:discard:dataimage' , this.startGrabbing );
+			this.on( 'action:uploaded:dataimage' , this.imageUploaded );
+		},
+		imageCreated : function( grabber , imageData ){
+			this._grabber.stop().hide();
+			this._uploader.show().setImageData(imageData);
+		},
+		startGrabbing:function(){
+			this._uploader.hide();
+			this._grabber.show().start();
+			return this;
+		},
+		imageUploaded : function() {
+			this.controller.trigger( 'action:uploaded:dataimage' );
+		},
+		getAction : function(){
+			return this._grabber.action;
+		},
+		dismiss:function(){
+			this._grabber.stop();
+			return this;
 		}
-		this.get_title = function(){
-			return this.$el.find('input').val();
-		}
-		this.done_upload = function(){
-			this.$el.find('.setting,.image-upload').hide();
-		}
-	};
+	});
 
-})(jQuery,window);
+	
+	media.view.GrabberButton = Button.extend({
+		className:  'grabber-button',
+		_grabber : null,
+		_modal : null,
+		
+		initialize: function( options ) {
+			Button.prototype.initialize.apply( this, arguments );
+			var action;
+			_.defaults( this.options, {
+				grabber : null,
+				title   : 'Image Grabber'
+			});
+			this._grabber = new media.view.DataSourceImageGrabber({ 
+				controller: this.controller , 
+				grabber:    this.options.grabber 
+			});
+			this._modal = new Modal({
+				controller: $(), // use empty controller. modal must not propagate 'ready' event, otherwise Backbone.History gets started twice 
+				title:      this.options.title
+			});
+			
+			this._modal.content( this._grabber );
+			
+			action = this._grabber.getAction();
+			this.listenTo( this.controller, action+':activate '+action+':deactivate', this.toggleModeHandler );
+			this.listenTo( this.controller, action+':action:done', this.back );
+			this.listenTo( this.controller , 'action:uploaded:dataimage', this.uploadDone );
+			this.listenTo( this._modal, 'close', this.back );
+		},
+		uploadDone:function(){
+			this._grabber.dismiss();
+			this._modal.close();
+		},
+		back: function () {
+			this._grabber.dismiss();
+			this.controller.deactivateMode( this._grabber.getAction() ).activateMode( 'edit' );
+		},
+
+		click: function() {
+			Button.prototype.click.apply( this, arguments );
+			if ( ! this.controller.isModeActive( this._grabber.getAction() ) ) {
+				this.controller.deactivateMode( 'edit' ).activateMode( this._grabber.getAction() );
+				this._modal.open();
+				this._grabber.startGrabbing();
+			}
+		}
+
+	});
+
+
+})(jQuery,window,mOxie);

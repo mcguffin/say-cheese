@@ -5,15 +5,14 @@ Plugin Name: Say Cheese
 Plugin URI: https://github.com/mcguffin/say-cheese/
 Description: Add Media through Webcam and Copy Paste
 Author: Jörn Lund
-Version: 0.0.4
+Version: 0.1.0
 Author URI: https://github.com/mcguffin/
 License: GPL2
 */
 
 
 function cheese_admin_init() {
-	wp_register_script( 'canvas-to-blob' , plugins_url( 'js/canvas-to-blob.min.js' , __FILE__ ) , array() , '2.0.5' );
-	wp_register_script( 'jquery-webcam-recorder' , plugins_url( 'js/jquery-webcam-recorder.js' , __FILE__ ) , array( 'jquery' , 'canvas-to-blob' , 'swfobject' ) , '0.0.1' );
+	wp_register_script( 'jquery-webcam-recorder' , plugins_url( 'js/jquery-webcam-recorder.js' , __FILE__ ) , array( 'jquery' , 'swfobject' ) , '0.0.1' );
 	wp_register_script( 'jquery-pasteboard' , plugins_url( 'js/jquery.pasteboard.js' , __FILE__ ) , array( 'jquery' ) , '0.0.1' );
 	wp_register_script( 'cheese' , plugins_url( 'js/cheese.js' , __FILE__ ) , array( 'jquery' ) , '0.0.1' );
 	wp_register_script( 'cheese-media-view' , plugins_url( 'js/media-view.js' , __FILE__ ) , array('media-editor' , 'jquery-webcam-recorder' , 'jquery-pasteboard' , 'cheese' ) , '0.0.1' );
@@ -36,7 +35,7 @@ function cheese_admin_init() {
 		'enable_pasteboard' => apply_filters( 'saycheese_enable_pasteboard' , true ),
 	) );
 
-	wp_register_style( 'cheese' , plugins_url( 'css/cheese.css' , __FILE__ ) , array( ) , '0.0.1' );
+	wp_register_style( 'cheese' , plugins_url( 'css/cheese.css' , __FILE__ ) , array( ) , '0.1.0' );
 }
 add_action( 'admin_init' , 'cheese_admin_init');
 

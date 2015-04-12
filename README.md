@@ -3,8 +3,7 @@ Say Cheese
 
 Take a webcam snapshot or paste image data and upload it into the WordPress Media Library.
 
- - Developed in WP 3.8
- - Last tested in WP 4.1-alpha
+ - Developed in WP 3.8 – WP 4.2
  - Should work with WordPress 3.5+
  - German localization.
 
@@ -53,6 +52,9 @@ ToDo:
  - disable paste in safari. Requires an answer for [this question](http://stackoverflow.com/questions/21366465/is-there-a-way-to-detect-webkit-fake-url-browser-behavior).
  - open library tab after upload
  - media options: enable Paste / enable Webcam
+ - Modals: 
+ 	- set title
+ 	- use default file names for paste and snapshot
 
 Support
 -------

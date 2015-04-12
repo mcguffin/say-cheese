@@ -47,7 +47,8 @@
 			flash : {
 				swf_url : 'WebcamRecorder.swf'
 			},
-			html5 : {}
+			html5 : {},
+			autostart:false
 		},options);
 		
 		
@@ -103,7 +104,6 @@
 			},
 			start : function(){
 				var $self = this;
-				
 				navigator.getUserMedia({
 					video: this.options.camera,
 					audio: this.options.microphone

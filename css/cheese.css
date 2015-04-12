@@ -16,24 +16,46 @@ recorder:
 
 
 */
-.wp-core-ui .instruments .setting,
-.wp-core-ui .instruments .button-secondary,
-.wp-core-ui .instruments .button-primary {
+
+.wp-core-ui .grabber-button {
+	margin:10px 10px 10px 0;
+	
+}
+
+.wp-core-ui .button.button-action {
 	height:auto;
 	padding-top:0.3em;
 	text-align:center;
 	display:inline-block;
+}
+.wp-core-ui .instruments .button-action {
 	float:left;
 }
+.wp-core-ui .instruments {
+	background:rgba(255,255,255,0.8);
+	border:1px solid rgba(230,230,230,0.8);
+	border-radius:3px;
+	position:absolute;
+	right:0;
+	bottom:0;
+	padding:1.5em;
+}
+.wp-core-ui .recorder .instruments {
+	background:transparent;
+	border-style:none;
+}
+.data-source-image .instruments {
+}
 .wp-core-ui .instruments .setting {
+	float:left;
 	text-align:left;
 	display:block;
 	width:400px;
 	margin:0 1em;
 	padding:0.2em;
-	background:rgba(255,255,255,0.8);
 }
 .wp-core-ui .instruments .setting input {
+	box-sizing:border-box;
 	width:100%;
 }
 .wp-core-ui .instruments .setting span {
@@ -80,13 +102,6 @@ recorder:
 	color:#aa0000;
 	font-style:italic;
 }
-.instruments {
-	position:absolute;
-	bottom:0;
-	right:0;
-	padding:2em;
-}
-
 
 
 
