@@ -66,6 +66,7 @@
 		
 		initialize : function() {
 			_.defaults( this.options, {
+				defaultFileName : l10n.image
 			});
 			var self = this;
 
@@ -83,7 +84,7 @@
 				click:function(){ self.discardImage.apply(self,arguments); }
 			});
 			this.nameInput = new media.view.NameInput({
-				defaultValue : l10n.image
+				defaultValue : this.options.defaultFileName
 			});
 			this.uploadBtn = new media.view.ActionButton({
 				className : 'image-upload',
@@ -304,16 +305,17 @@
 			_.defaults( this.options, {
 				grabber : media.view.WebcamRecorder
 			});
-			var outer = new media.View({
-				tagName:'div',
-				className:'image-grabber-content'
-			});
+			var defaultFileName = (this.options.grabber == media.view.WebcamRecorder) ? l10n.snapshot : ((this.options.grabber == media.view.Pasteboard) ? l10n.pasted : l10n.image ),
+				wrap = new media.View({
+					className : 'image-grabber-content',
+					tagName : 'div',
+					controller:this
+				});
 			this._grabber  = new this.options.grabber({controller:this});
-			this._uploader = new media.view.DataSourceImageUploader({controller:this});
-			outer.views.add(this._grabber);
-			outer.views.add(this._uploader);
-			
-			this.views.add(outer);
+			this._uploader = new media.view.DataSourceImageUploader({controller:this,defaultFileName:defaultFileName});
+			wrap.views.add(this._grabber);
+			wrap.views.add(this._uploader);
+			this.views.add(wrap);
 			
 			this.on( 'action:create:dataimage' , this.imageCreated );
 			this.on( 'action:discard:dataimage' , this.startGrabbing );
@@ -339,6 +341,7 @@
 			return this;
 		}
 	});
+
 	
 	media.view.GrabberButton = Button.extend({
 		className:  'grabber-button',
@@ -347,8 +350,7 @@
 		
 		initialize: function( options ) {
 			Button.prototype.initialize.apply( this, arguments );
-			var self = this,
-				action;
+			var action;
 			_.defaults( this.options, {
 				grabber : null,
 				title   : 'Image Grabber'
@@ -357,11 +359,11 @@
 				controller: this.controller , 
 				grabber:    this.options.grabber 
 			});
-			this._modal = new media.view.Modal({
+			this._modal = new Modal({
 				controller: $(), // use empty controller. modal must not propagate 'ready' event, otherwise Backbone.History gets started twice 
-				title : this.options.title
+				title:      this.options.title
 			});
-			// wrap around div.edit-frame
+			
 			this._modal.content( this._grabber );
 			
 			action = this._grabber.getAction();
@@ -385,8 +387,6 @@
 				this.controller.deactivateMode( 'edit' ).activateMode( this._grabber.getAction() );
 				this._modal.open();
 				this._grabber.startGrabbing();
-// 			$('h1').text(this.options.title).wrap('<div class="media-modal-title" />').parent().insertBefore(this._modal.$('.media-modal-content'));
-//			console.log($('h1').text(this.options.title).wrap('<div class="media-modal-title" />').parent());
 			}
 		}
 

@@ -100,6 +100,10 @@ div.webcam-recorder {
 	height: 100%;
 	padding-top: 50px;
 	box-sizing: border-box;
+	overflow:auto;
+}
+.media-frame-content .image-grabber {
+	padding-top: 0;
 }
 .image-grabber .image-grabber-content {
 	height: 100%;
@@ -109,6 +113,8 @@ div.webcam-recorder {
 	overflow:auto;
 	padding:1em 0;
 }
+
+
 
 .recorder-inline-content,
 .pasteboard-inline-content {

@@ -24,6 +24,11 @@
 		return 'p' + guid + (counter++).toString(32);
 	}
 	
+	// extract data from data URL
+	function file_data_from_datasrc( src ) {
+		return src.split('\r').join('').split('\n').join('');
+	}
+	
 	window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 	// check canvas, canvas context 2d, canvas toDataUrl support
@@ -171,6 +176,7 @@
 				
 				window.statechange = function(arg) {
 					$self.state = arg;
+					console.log('statechange',arg);
 					$self.trigger( $.Event('recorder:state:'+arg) , $self.element );
 				}
 				
@@ -197,12 +203,19 @@
 						clearInterval(create_swf_interval);
 					}
 				},100);
+				console.log('create',this);
 			},
 			start : function() {
-				if ( this.state == 'ready' || this.state == 'error' || this.state == 'permissionerror' )
-					return this.element.startcam( );
-				else 
-					this.one('recorder:state:ready',function(e){ e.stopPropagation();this.start(); });
+				var self = this;
+				if ( this.state == 'ready' || this.state == 'error' || this.state == 'permissionerror' ) {
+					ret = this.element.startcam( );
+					return ret;
+				} else {
+					this.one('recorder:state:ready',function(e){ 
+						e.stopPropagation();
+						self.start(); 
+					});
+				}
 			},
 			stop : function() {
 				try {
@@ -210,7 +223,7 @@
 				} catch(err){}
 			},
 			snapshot : function(){
-				return this.element.snapshot();
+				return file_data_from_datasrc( this.element.snapshot() );
 			}
 			
 		}

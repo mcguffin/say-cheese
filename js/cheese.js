@@ -4,7 +4,9 @@
 		media        = wp.media,
 		bindHandlers = media.view.MediaFrame.Select.prototype.bindHandlers,
 		browseRouter = media.view.MediaFrame.Select.prototype.browseRouter,
-		l10n = media.view.l10n = typeof _wpMediaViewsL10n === 'undefined' ? {} : _wpMediaViewsL10n;
+		l10n = media.view.l10n = typeof _wpMediaViewsL10n === 'undefined' ? {} : _wpMediaViewsL10n,
+		is_chrome = navigator.userAgent.indexOf('Chrome') > -1;
+		is_safari = !is_chrome && navigator.userAgent.indexOf("Safari") > -1;
 
 	l10n = _.extend(l10n,cheese_l10n);
 
@@ -15,7 +17,7 @@
 
 	var cheese = {
 		supports : {
-			paste: cheese_l10n.enable_pasteboard && (('paste' in document) || ('onpaste' in document) || typeof(window.onpaste) === 'object'),
+			paste: ! is_safari && cheese_l10n.enable_pasteboard && (('paste' in document) || ('onpaste' in document) || typeof(window.onpaste) === 'object'),
 			webcam_recording: cheese_l10n.enable_snapshot && $.recorder.supported,//!!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)
 		},
 		
@@ -97,14 +99,15 @@
 	media.view.AttachmentsBrowser.prototype.initialize = function() {
 		oldInitialize.apply(this,arguments);
 		if ( ! (this.controller instanceof media.view.MediaFrame.Select) ) {
-			this.toolbar.set( 'pasteModeButton', new wp.media.view.GrabberButton({
+			
+			cheese.supports.paste && this.toolbar.set( 'pasteModeButton', new wp.media.view.GrabberButton({
 				text: l10n.copy_paste,
 				controller: this.controller,
 				priority: -65,
 				grabber: media.view.Pasteboard
 			}).render() );
 
-			this.toolbar.set( 'recordModeButton', new wp.media.view.GrabberButton({
+			cheese.supports.webcam_recording && this.toolbar.set( 'recordModeButton', new wp.media.view.GrabberButton({
 				text: l10n.take_snapshot,
 				controller: this.controller,
 				priority: -64,

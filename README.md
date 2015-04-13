@@ -19,9 +19,10 @@ In Mobile Safari the Snapshot feature is already implemented through the systems
 **Safari** makes [some weird things](https://bugs.webkit.org/show_bug.cgi?id=49141) with 
 pasted images. It seems impossible to predict such behaviour (unless somebody can answer me
 [this question](http://stackoverflow.com/questions/21366465/is-there-a-way-to-detect-webkit-fake-url-browser-behavior)), 
-so the only thing that will appear after pasting an image from the clipboard will be an error message.
+so pasting is disabled by user agent detection.
 
-The same is true for **Safari mobile**. Additionally iOS already provides Webcam access in the regular file upload dialog, so the whole plugin is totally dispensable on Apple mobile devices.
+The same is true for **Safari mobile**. Additionally iOS already provides Webcam access in the regular file upload dialog, 
+so the whole plugin is totally dispensable on Apple mobile devices.
 
 In **IE** pasting images is not supported. Webcam support on older IEs is achieved through a Flash fallback.
 
@@ -41,15 +42,17 @@ Copy/Paste Support:
 
 Mac OS:
 
-| copy from / paste to | Firefox  | Chrome   | Safari      |
-|----------------------|----------|----------|-------------|
-| Mac Finder           |    1)    |    4)    | broken      |
-| Mac Preview          |    OK    |    OK    | broken      |
-| Photoshop CS 6       |    OK    |    3)    | broken      |
-| A Webpage            |    2)    |    OK    | very broken |
-| MS Word              |    ?     |    ?     |    ?        |
-| OpenOffice           |    ?     |    ?     |    ?        |
-| Gimp                 |    ?     |    ?     |    ?        |
+| copy from / paste to | Firefox  | Chrome   | Safari   |
+|----------------------|----------|----------|----------|
+| Mac Finder           |    1)    |    4)    | disabled |
+| Mac Preview          |    OK    |    OK    | disabled |
+| Photoshop CS 6       |    OK    |    3)    | disabled |
+| A Webpage            |    2)    |    OK    | disabled |
+| MS Word              |    ?     |    ?     | disabled |
+| OpenOffice           |    ?     |    ?     | disabled |
+| Gimp                 |    ?     |    ?     | disabled |
+
+
 
 **?** untested<br />
 **1)** The OS Icon will be inserted.<br />
@@ -72,16 +75,15 @@ There are two filters allowing you to programmatically disable the plugin featur
 
 ToDo:
 -----
- - disable paste in safari. Requires an answer for [this question](http://stackoverflow.com/questions/21366465/is-there-a-way-to-detect-webkit-fake-url-browser-behavior).
- - open library tab after upload
- - media options: enable Paste / enable Webcam
- - Upload option Format:  ( ) png, ( ) jpeg (paste: defaults to pasted data, record: defaults to jpeg)
- - Modal views: 
- 	- set title
- 	- use default file names for paste and snapshot
- 	- avoid scrolling
- - Documentation
- 	- Matrix copy-from / browser+os -> result
+ - [x] disable paste in safari.
+ - [ ] open library tab after upload
+ - [ ] media options: enable Paste / enable Webcam
+ - [ ] Upload option Format:  ( ) png, ( ) jpeg (paste: defaults to pasted data, record: defaults to jpeg)
+ - [ ] Modal views: 
+ 	- [ ] set title
+ - [ ] use different default file names for paste and snapshot
+ - [ ] Documentation
+ 	- [ ] Matrix copy-from / browser+os -> result
 
 Support
 -------
