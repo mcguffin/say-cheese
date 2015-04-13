@@ -40,7 +40,8 @@ Tested in
 Copy/Paste Support:
 -------------------
 
-Mac OS:
+### Mac OS:
+
 
 | copy from / paste to | Firefox  | Chrome   | Safari   |
 |----------------------|----------|----------|----------|
@@ -76,14 +77,17 @@ There are two filters allowing you to programmatically disable the plugin featur
 ToDo:
 -----
  - [x] disable paste in safari.
- - [ ] open library tab after upload
+ - [ ] MediaFrame.Select: open library tab after upload
  - [ ] media options: enable Paste / enable Webcam
  - [ ] Upload option Format:  ( ) png, ( ) jpeg (paste: defaults to pasted data, record: defaults to jpeg)
- - [ ] Modal views: 
- 	- [ ] set title
- - [ ] use different default file names for paste and snapshot
+ - [x] Modal views: 
+ 	- [x] set title
+ - [x] use different default file names for paste and snapshot
  - [ ] Documentation
  	- [ ] Matrix copy-from / browser+os -> result
+		- [x] Mac
+		- [ ] Win
+		- [ ] Linux
 
 Support
 -------

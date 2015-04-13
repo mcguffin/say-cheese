@@ -105,6 +105,12 @@ div.webcam-recorder {
 .media-frame-content .image-grabber {
 	padding-top: 0;
 }
+.image-grabber .media-frame-title {
+	left:0;
+}
+.media-frame-content .image-grabber .media-frame-title {
+	display: none;
+}
 .image-grabber .image-grabber-content {
 	height: 100%;
 	box-shadow: 0px 4px 4px -4px rgba(0, 0, 0, 0.1) inset;

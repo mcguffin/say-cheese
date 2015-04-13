@@ -306,15 +306,26 @@
 				grabber : media.view.WebcamRecorder
 			});
 			var defaultFileName = (this.options.grabber == media.view.WebcamRecorder) ? l10n.snapshot : ((this.options.grabber == media.view.Pasteboard) ? l10n.pasted : l10n.image ),
+				title = (this.options.grabber == media.view.WebcamRecorder) ? l10n.take_snapshot : ((this.options.grabber == media.view.Pasteboard) ? l10n.copy_paste : l10n.image ),
 				wrap = new media.View({
 					className : 'image-grabber-content',
 					tagName : 'div',
 					controller:this
+				}), 
+				titleDiv = new media.View({
+					className : 'media-frame-title',
+					tagName : 'div'
+				}),
+				titleH1 = new media.View({
+					tagName : 'h1'
 				});
 			this._grabber  = new this.options.grabber({controller:this});
 			this._uploader = new media.view.DataSourceImageUploader({controller:this,defaultFileName:defaultFileName});
 			wrap.views.add(this._grabber);
 			wrap.views.add(this._uploader);
+			titleH1.$el.text(title);
+			titleDiv.views.add(titleH1);
+			this.views.add(titleDiv);
 			this.views.add(wrap);
 			
 			this.on( 'action:create:dataimage' , this.imageCreated );

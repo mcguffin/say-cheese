@@ -24,7 +24,7 @@ function cheese_admin_init() {
 		'title' 						=> __('Title'),
 		'snapshot' 						=> __('Snapshot','say-cheese'),
 		'take_snapshot' 				=> __('Take Snapshot','say-cheese'),
-		'copy_paste' 					=> __('Copy-Paste' , 'say-cheese'),
+		'copy_paste' 					=> __('Copy & Paste' , 'say-cheese'),
 		'pasted' 						=> __('Pasted' , 'say-cheese'),
 		'paste_from_clipboard' 			=> __('Paste from Clipboard' , 'say-cheese'),
 		'image' 						=> __('Image'),
