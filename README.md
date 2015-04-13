@@ -5,7 +5,7 @@ Take a webcam snapshot or paste image data and upload it into the WordPress Medi
 
  - Developed in WP 3.8 – WP 4.2
  - Should work with WordPress 3.5+
- - German localization.
+ - German and Dutch localization. 
 
 Browser Support
 ---------------
@@ -24,7 +24,7 @@ so pasting is disabled by user agent detection.
 The same is true for **Safari mobile**. Additionally iOS already provides Webcam access in the regular file upload dialog, 
 so the whole plugin is totally dispensable on Apple mobile devices.
 
-In **IE** pasting images is not supported. Webcam support on older IEs is achieved through a Flash fallback.
+In **IE** pasting images is not supported. 
 
 In **Firefox** you can't paste images copied from other websites than your own. Firefox only sends 
 image URLs to the clipboard, not the raw image data. When pasting such an image FF will try 
@@ -43,23 +43,23 @@ Copy/Paste Support:
 ### Mac OS:
 
 
-| copy from / paste to | Firefox  | Chrome   | Safari   |
-|----------------------|----------|----------|----------|
-| Mac Finder           |    1)    |    4)    | disabled |
-| Mac Preview          |    OK    |    OK    | disabled |
-| Photoshop CS 6       |    OK    |    3)    | disabled |
-| A Webpage            |    2)    |    OK    | disabled |
-| MS Word              |    ?     |    ?     | disabled |
-| OpenOffice           |    ?     |    ?     | disabled |
-| Gimp                 |    ?     |    ?     | disabled |
+| copy from / paste to  | Firefox  | Chrome   | Safari   |
+|-----------------------|----------|----------|----------|
+| Mac Finder            |    1)    |    1)    | disabled |
+| Mac Finder Screenshot |    OK    |    OK    | disabled |
+| Mac Preview           |    OK    |    OK    | disabled |
+| Photoshop CS 6        |    OK    |    3)    | disabled |
+| A Webpage             |    2)    |    OK    | disabled |
+| MS Word               |    ?     |    ?     | disabled |
+| OpenOffice            |    ?     |    ?     | disabled |
+| Gimp                  |    ?     |    ?     | disabled |
 
 
 
 **?** untested<br />
-**1)** The OS Icon will be inserted.<br />
+**1)** The OS Icon matching to the file type is inserted.<br />
 **2)** Error Message due to security restrictions.<br />
-**3)** Large images with transparency only arrive totaly destroyed. In any case the pasted image is scaled down for some reason.<br />
-**4)** Nothing happens.
+**3)** Large images with transparency only arrive totaly destroyed. Aditionally the pasted image will be downsized.<br />
 
 A Workaround for 1)–4) cases is to paste to Mac Preview first and then copy from there.
 
