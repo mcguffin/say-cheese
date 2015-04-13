@@ -36,6 +36,30 @@ Mobile:
 Tested in 
  - Firefox mobile. (Snapshot)
 
+Copy/Paste Support:
+-------------------
+
+Mac OS:
+
+| copy from / paste to | Firefox  | Chrome   | Safari      |
+|----------------------|----------|----------|-------------|
+| Mac Finder           |    1)    |    4)    | broken      |
+| Mac Preview          |    OK    |    OK    | broken      |
+| Photoshop CS 6       |    OK    |    3)    | broken      |
+| A Webpage            |    2)    |    OK    | very broken |
+| MS Word              |    ?     |    ?     |    ?        |
+| OpenOffice           |    ?     |    ?     |    ?        |
+| Gimp                 |    ?     |    ?     |    ?        |
+
+**?** untested<br />
+**1)** The OS Icon will be inserted.<br />
+**2)** Error Message due to security restrictions.<br />
+**3)** Large images with transparency only arrive totaly destroyed. In any case the pasted image is scaled down for some reason.<br />
+**4)** Nothing happens.
+
+A Workaround for 1)–4) cases is to paste to Mac Preview first and then copy from there.
+
+
 Filters:
 --------
 There are two filters allowing you to programmatically disable the plugin features.
