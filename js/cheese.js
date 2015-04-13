@@ -14,7 +14,6 @@
 	});
 
 	var cheese = {
-		
 		supports : {
 			paste: cheese_l10n.enable_pasteboard && (('paste' in document) || ('onpaste' in document) || typeof(window.onpaste) === 'object'),
 			webcam_recording: cheese_l10n.enable_snapshot && $.recorder.supported,//!!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)
@@ -34,7 +33,8 @@
 		
 		// upload_data_url: 
 	};
-	
+	console.log(cheese.supports.paste);
+
 	// extend media input methods.
 	
 	/**
@@ -98,14 +98,14 @@
 		oldInitialize.apply(this,arguments);
 		if ( ! (this.controller instanceof media.view.MediaFrame.Select) ) {
 			this.toolbar.set( 'pasteModeButton', new wp.media.view.GrabberButton({
-				text: 'Paste Image',
+				text: l10n.copy_paste,
 				controller: this.controller,
 				priority: -65,
 				grabber: media.view.Pasteboard
 			}).render() );
 
 			this.toolbar.set( 'recordModeButton', new wp.media.view.GrabberButton({
-				text: 'Take Snapshot',
+				text: l10n.take_snapshot,
 				controller: this.controller,
 				priority: -64,
 				grabber: media.view.WebcamRecorder
