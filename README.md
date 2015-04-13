@@ -42,26 +42,26 @@ Copy/Paste Support:
 
 ### Mac OS:
 
+| copy from / paste to  | Firefox  | Chrome   |
+|-----------------------|----------|----------|
+| Mac Finder            |    1)    |    1)    |
+| Mac Finder Screenshot |    OK    |    OK    |
+| Mac Preview           |    OK    |    OK    |
+| Mac iPhoto            |    4)    |    5)    |
+| QuickTime Player      |    OK    |    OK    |
+| Photoshop CS 6        |    OK    |    3)    |
+| A Webpage             |    2)    |    OK    |
+| MS Word Mac           |    4)    |    OK    |
+| LibreOffice           |    OK    |    OK    |
 
-| copy from / paste to  | Firefox  | Chrome   | Safari   |
-|-----------------------|----------|----------|----------|
-| Mac Finder            |    1)    |    1)    | disabled |
-| Mac Finder Screenshot |    OK    |    OK    | disabled |
-| Mac Preview           |    OK    |    OK    | disabled |
-| Photoshop CS 6        |    OK    |    3)    | disabled |
-| A Webpage             |    2)    |    OK    | disabled |
-| MS Word               |    ?     |    ?     | disabled |
-| OpenOffice            |    ?     |    ?     | disabled |
-| Gimp                  |    ?     |    ?     | disabled |
 
-
-
-**?** untested<br />
-**1)** The OS Icon matching to the file type is inserted.<br />
+**1)** The OS Icon matching to the file type gets pasted.<br />
 **2)** Error Message due to security restrictions.<br />
 **3)** Large images with transparency only arrive totaly destroyed. Aditionally the pasted image will be downsized.<br />
+**4)** Nothing happens.<br />
+**5)** An empty image gets pasted.<br />
 
-A Workaround for 1)–4) cases is to paste to Mac Preview first and then copy from there.
+A Workaround for 1) – 5) is to paste into Mac Preview first and then copy again.
 
 
 Filters:
