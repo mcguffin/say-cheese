@@ -88,6 +88,7 @@ ToDo:
 		- [x] Mac
 		- [ ] Win
 		- [ ] Linux
+ - [ ] Message at Error: Image size exceeds upload limit.
 
 Support
 -------

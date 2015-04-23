@@ -49,6 +49,10 @@
 			media.view.Button.prototype.render.apply(this,arguments);
 			this.$el.addClass('button-action');
 			this.$el.prepend('<span class="dashicons dashicons-'+this.options.dashicon+'"></span>');
+			if ( this.model.disabled )
+				this.$el.addClass('disabled');
+			else
+				this.$el.removeClass('disabled');
 		}
 	});
 	
@@ -63,6 +67,8 @@
 		uploadBtn : null,
 		
 		uploader : null,
+		
+		_model : {},
 		
 		initialize : function() {
 			_.defaults( this.options, {
@@ -129,7 +135,14 @@
 			mediaFrame.uploader.uploader.success = function(){
 				self.controller.trigger( 'action:uploaded:dataimage' );
 				mediaFrame.uploader.uploader.success = oldSuccess;
+				self.uploadBtn.model.disabled = self.discardBtn.model.disabled = false;
+				self.uploadBtn.render();
+				self.discardBtn.render();
 			}
+			this.uploadBtn.model.disabled = this.discardBtn.model.disabled = true;
+			this.uploadBtn.render();
+			this.discardBtn.render();
+			
 		},
 		show:function(){
 			this.$el.show();
