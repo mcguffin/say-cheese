@@ -35,7 +35,6 @@
 		
 		// upload_data_url: 
 	};
-	console.log(cheese.supports.paste);
 
 	// extend media input methods.
 	

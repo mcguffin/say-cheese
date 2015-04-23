@@ -4,7 +4,7 @@
 		Button = media.view.Button,
 		Modal  = media.view.Modal,
 		l10n   = media.view.l10n = typeof _wpMediaViewsL10n === 'undefined' ? {} : _wpMediaViewsL10n,
-		mediaFrame;
+		mediaFrame, imageUploader;
 
 	l10n = _.extend(l10n,cheese_l10n);
 	
@@ -75,6 +75,7 @@
 				defaultFileName : l10n.image
 			});
 			var self = this;
+			imageUploader = this;
 
 			var instr = new media.View({
 				tagName    : 'div',
@@ -105,6 +106,8 @@
 			instr.views.add( this.discardBtn );
 			instr.views.add(this.nameInput);
 			instr.views.add( this.uploadBtn );
+
+			this.bindEvents();
 		},
 		setImageData : function( data ) {
 			var container = this.$el.find('.image-container').html('').get(0);
@@ -113,9 +116,16 @@
 			
 			this.image = new o.Image();
 			this.image.onload = function() {
-				this.embed( container , { type:'image/png' } );
+				var opts = mediaFrame.uploader.uploader.uploader.getOption('resize'),
+					scale = Math.max(opts.width/this.width,opts.height/this.height);
+				!!opts && (scale < 1) && this.downsize(this.width*scale,this.height*scale);
+				(!opts || (scale >= 1)) && this.embed( container );
 			}
+			this.image.bind('Resize', function(e) {
+				this.embed( container );
+			});
 			this.image.load( data );
+			this.disabled(false);
 			return this;
 		},
 		render : function() {
@@ -127,22 +137,13 @@
 		uploadImage : function() {
 			var blob = this.image.getAsBlob( 'image/png' ),
 				self = this, uploader = new wp.Uploader();
+
+
 			blob.detach(blob.getSource());
 			blob.name = this.nameInput.val() + '.png';
 			mediaFrame.uploader.uploader.uploader.addFile( blob , this.nameInput.val() + '.png' );
 			
-			var oldSuccess = mediaFrame.uploader.uploader.success;
-			mediaFrame.uploader.uploader.success = function(){
-				self.controller.trigger( 'action:uploaded:dataimage' );
-				mediaFrame.uploader.uploader.success = oldSuccess;
-				self.uploadBtn.model.disabled = self.discardBtn.model.disabled = false;
-				self.uploadBtn.render();
-				self.discardBtn.render();
-			}
-			this.uploadBtn.model.disabled = this.discardBtn.model.disabled = true;
-			this.uploadBtn.render();
-			this.discardBtn.render();
-			
+			this.disabled(true);
 		},
 		show:function(){
 			this.$el.show();
@@ -151,7 +152,30 @@
 		hide:function(){
 			this.$el.hide();
 			return this;
+		},
+		disabled : function(disabled) {
+			this.uploadBtn.model.disabled = this.discardBtn.model.disabled = disabled;
+			this.uploadBtn.render();
+			this.discardBtn.render();
+		},
+		_uploadSuccessHandler : function(){
+			imageUploader.controller.trigger( 'action:uploaded:dataimage' );
+			imageUploader.disabled(false);
+		},
+		_uploadErrorHandler : function(){
+			imageUploader.controller.trigger( 'error:uploaded:dataimage' );
+			imageUploader.disabled(false);
+		},
+		bindEvents : function(){
+			mediaFrame.uploader.uploader.uploader.bind( 'FileUploaded' , this._uploadSuccessHandler );
+			mediaFrame.uploader.uploader.uploader.bind( 'Error' , this._uploadErrorHandler );
 		}
+// doesn't work.
+// 		,
+// 		unbindEvents : function() {
+// 			mediaFrame.uploader.uploader.uploader.unbind( 'FileUploaded' , this._uploadSuccessHandler , false );
+// 			mediaFrame.uploader.uploader.uploader.unbind( 'Error' , this._uploadErrorHandler , false );
+// 		}
 	});
 	
 	
@@ -344,6 +368,7 @@
 			this.on( 'action:create:dataimage' , this.imageCreated );
 			this.on( 'action:discard:dataimage' , this.startGrabbing );
 			this.on( 'action:uploaded:dataimage' , this.imageUploaded );
+			this.on( 'error:uploaded:dataimage' , this.imageUploadError );
 		},
 		imageCreated : function( grabber , imageData ){
 			this._grabber.stop().hide();
@@ -356,6 +381,9 @@
 		},
 		imageUploaded : function() {
 			this.controller.trigger( 'action:uploaded:dataimage' );
+		},
+		imageUploadError : function() {
+			this.controller.trigger( 'error:uploaded:dataimage' );
 		},
 		getAction : function(){
 			return this._grabber.action;
@@ -394,6 +422,7 @@
 			this.listenTo( this.controller, action+':activate '+action+':deactivate', this.toggleModeHandler );
 			this.listenTo( this.controller, action+':action:done', this.back );
 			this.listenTo( this.controller , 'action:uploaded:dataimage', this.uploadDone );
+			this.listenTo( this.controller , 'error:uploaded:dataimage', this.uploadDone );
 			this.listenTo( this._modal, 'close', this.back );
 		},
 		uploadDone:function(){
