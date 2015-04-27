@@ -107,7 +107,6 @@
 			instr.views.add(this.nameInput);
 			instr.views.add( this.uploadBtn );
 
-			this.bindEvents();
 		},
 		setImageData : function( data ) {
 			var container = this.$el.find('.image-container').html('').get(0);
@@ -135,6 +134,7 @@
 			this.controller.trigger( 'action:discard:dataimage' , this );
 		},
 		uploadImage : function() {
+			this.bindEvents();
 			var blob = this.image.getAsBlob( 'image/png' ),
 				self = this, uploader = new wp.Uploader();
 
