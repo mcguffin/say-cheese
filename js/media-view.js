@@ -118,7 +118,6 @@
 			this.image.onload = function() {
 				var opts = mediaFrame.uploader.uploader.uploader.getOption('resize'),
 					scale = Math.max(opts.width/this.width,opts.height/this.height);
-				console.log(opts,scale);
 				!!opts && (scale < 1) && this.downsize(this.width*scale,this.height*scale);
 				this.embed( container );
 			}
@@ -128,7 +127,6 @@
 			this.image.load( data );
 			if ( this.$imageContainer )
 				this.$imageContainer.append(this.image);
-			console.log(this.$imageContainer);
 			this.disabled(false);
 			return this;
 		},
