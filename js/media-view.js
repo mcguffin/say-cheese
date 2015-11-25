@@ -104,9 +104,10 @@
 			
 			this.views.add(instr);
 			instr.views.add( this.discardBtn );
-			instr.views.add(this.nameInput);
+			instr.views.add( this.nameInput );
 			instr.views.add( this.uploadBtn );
-
+			
+			this.$imageContainer = false;
 		},
 		setImageData : function( data ) {
 			var container = this.$el.find('.image-container').html('').get(0);
@@ -117,18 +118,23 @@
 			this.image.onload = function() {
 				var opts = mediaFrame.uploader.uploader.uploader.getOption('resize'),
 					scale = Math.max(opts.width/this.width,opts.height/this.height);
+				console.log(opts,scale);
 				!!opts && (scale < 1) && this.downsize(this.width*scale,this.height*scale);
-				(!opts || (scale >= 1)) && this.embed( container );
+				this.embed( container );
 			}
 			this.image.bind('Resize', function(e) {
 				this.embed( container );
 			});
 			this.image.load( data );
+			if ( this.$imageContainer )
+				this.$imageContainer.append(this.image);
+			console.log(this.$imageContainer);
 			this.disabled(false);
 			return this;
 		},
 		render : function() {
-			this.$el.prepend('<span class="image-container" />');
+			this.$imageContainer = $('<span class="image-container" />');
+			this.$el.prepend(this.$imageContainer);
 		},
 		discardImage : function(){
 			this.controller.trigger( 'action:discard:dataimage' , this );
