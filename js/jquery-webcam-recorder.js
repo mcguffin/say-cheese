@@ -140,8 +140,18 @@
 				this.trigger( $.Event('recorder:state:waiting') , this.element );
 			},
 			stop : function(){
-				if ( !! stream )
+				console.log(stream);
+				var tracks, s;
+				if ( !! stream && !! stream.stop ) {
 					stream.stop();
+				} else if ( !! stream.getVideoTracks ) {
+					tracks = stream.getVideoTracks();
+					for ( s in tracks ) {
+						if ( tracks[s].stop ) {
+							tracks[s].stop();
+						}
+					}
+				}
 				$(this.element).off('playing');
 				this.element.src = null;
 				this.state = 'stopped';
