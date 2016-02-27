@@ -13,6 +13,7 @@
   // Utils.
   var logging = require('./utils').log;
   var browserDetails = require('./utils').browserDetails;
+
   // Export to the adapter global object visible in the browser.
   module.exports.browserDetails = browserDetails;
   module.exports.extractVersion = require('./utils').extractVersion;
@@ -23,6 +24,7 @@
   // adapter.disableLog(true) but then logging from the switch statement below
   // will still appear.
   //require('./utils').disableLog(true);
+
 
   // Warn if version is not supported regardless of browser.
   // Min version can be set per browser in utils.js

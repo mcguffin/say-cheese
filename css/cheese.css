@@ -86,9 +86,12 @@ div.webcam-recorder {
 	margin:0 auto;
 	text-align: center;
 }
+.data-source-image canvas {
+	max-width:100%;
+}
 .webcam-recorder .data-source-image,
 .recorder {
-	max-width:640px;
+	max-width:100%;
 }
 #pasteboard-injector {
 	text-align:center;
@@ -119,7 +122,6 @@ div.webcam-recorder {
 	overflow:auto;
 	padding:1em 0;
 }
-
 
 
 .recorder-inline-content,

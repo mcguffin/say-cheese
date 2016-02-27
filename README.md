@@ -37,6 +37,20 @@ Mobile:
 Tested in 
  - Firefox mobile. (Snapshot)
 
+
+Webcam Support
+--------------
+
+| Browser  | Support   |
+|----------|-----------|
+| Firefox  |   HTML5   |
+| Chrome   |   HTML5   |
+| Safari   |   Flash   |
+| Opera    |     ?     |
+| IE       |   Flash   |
+| Edge     |     ?     |
+
+
 Copy/Paste Support:
 -------------------
 
@@ -64,6 +78,7 @@ Copy/Paste Support:
 A Workaround for 1) – 5) is to paste into Mac Preview first and then copy again.
 
 
+
 Filters:
 --------
 There are two filters allowing you to programmatically disable the plugin features.
@@ -80,6 +95,8 @@ ToDo:
  - [ ] MediaFrame.Select: open library tab after upload
  - [ ] media options: enable Paste / enable Webcam
  - [ ] Upload option Format:  ( ) png, ( ) jpeg (paste: defaults to pasted data, record: defaults to jpeg)
+ - [ ] Select recording size (QVGA, VGA, SVGA, HD, FullHD)
+ 	- [ ] Find reliable way to predict supported WebcamSizes
  - [x] Modal views: 
  	- [x] set title
  - [x] use different default file names for paste and snapshot
@@ -89,11 +106,11 @@ ToDo:
 		- [ ] Win
 		- [ ] Linux
  - [ ] Message at Error: Image size exceeds upload limit.
+ - [ ] Deprecate Flash fallback
 
 Support
 -------
 You like what you see? Maybe you already make some money with it? 
 Here are two ways to keep me rocking:
 
-[![Flattr this git repo](http://api.flattr.com/button/flattr-badge-large.png)](https://flattr.com/submit/auto?user_id=joern.lund&url=https://github.com/mcguffin/say-cheese&title=Say%20Cheese&language=php&tags=github&category=software)
 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=F8NKC6TCASUXE"><img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!" /></a>

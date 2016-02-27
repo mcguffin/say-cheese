@@ -23,11 +23,12 @@
 		
 		create_webcam_recorder : function( parent , options ) {
 			$.extend( true , options || {} , {
-					camera:{mandatory:{
-						minWidth: 640,
-						minHeight: 480
-					}},
-					microphone:false
+					constraints : {
+						video : {
+							width:1280, 
+							height:720 
+						}
+					}
 				});
 			return $(parent)
 				.recorder(options);

@@ -31,8 +31,8 @@
 	
 	window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 	// check canvas, canvas context 2d, canvas toDataUrl support
-	//
-	//
+
+
 	$.extend( $ , { recorder : {
 		 supported : false 
 	}});
@@ -43,10 +43,10 @@
 		$.extend( this , $.fn.recorder.prototype );
 		
 		this.options = $.extend( true , {
-			camera : true,
-			microphone : false,
-			width : 640,
-			height : 480,
+			constraints : {
+				video: { width: 1280, height: 720 },
+				audio: false
+			},
 			flash : {
 				swf_url : 'WebcamRecorder.swf'
 			},
@@ -95,6 +95,7 @@
 							var elem = document.createElement('canvas');
 							return !!(elem.getContext && elem.getContext('2d'));
 						})() &&
+						!!navigator.mediaDevices &&
 						!!navigator.mediaDevices.getUserMedia,
 			
 			create : function() {
@@ -108,10 +109,7 @@
 			start : function(){
 				var $self = this;
 				
-				navigator.mediaDevices.getUserMedia({
-					video: this.options.camera,
-					audio: this.options.microphone
-				})
+				navigator.mediaDevices.getUserMedia( this.options.constraints )
 				.then(
 					function( localMediaStream ) { // success
 						if (this.element.mozSrcObject !== undefined) {
@@ -121,7 +119,7 @@
 						};
 						stream = localMediaStream;
 						// should be separated from this class?
-		
+
 						// Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
 						// See crbug.com/110938.
 						$(this.element).on('playing', function(e) {
@@ -130,19 +128,19 @@
 						});
 				}.bind(this) )
 				.catch( function(e) { 
-						$self.state = 'error';
-						if ( e.code === 1 || e.name == "PermissionDeniedError" ) {
-							$self.trigger( $.Event('recorder:state:permissionerror') , [$self.element, e] );
-						} else {
-							$self.trigger( $.Event('recorder:state:error') , [$self.element, e] );
-						}
+					$self.state = 'error';
+					if ( e.code === 1 || e.name == "PermissionDeniedError" ) {
+						$self.trigger( $.Event('recorder:state:permissionerror') , [$self.element, e] );
+					} else {
+						$self.trigger( $.Event('recorder:state:error') , [$self.element, e] );
+						console.log(e);
+					}
 				});
 				this.state = 'waiting';
 				this.trigger( $.Event('recorder:state:waiting') , this.element );
 				
 			},
 			stop : function(){
-				console.log(stream);
 				var tracks, s;
 				if ( !! stream && !! stream.stop ) {
 					stream.stop();
@@ -198,7 +196,7 @@
 				// we need to wait until the palceholder div get attached to the DOM before we can embedSWF() it.
 				var create_swf_interval = setInterval(function() {
 					if ( $('#'+$self.id).inDOM() ) {
-						var width=640,height=480,
+						var width = 640, height = 480,
 							xiURL=false,
 							flashvars = {},
 							param = {
