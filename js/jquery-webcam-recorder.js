@@ -30,9 +30,17 @@
 	}
 	
 	window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
-	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+	if ( !!navigator.mediaDevices && !! navigator.mediaDevices.getUserMedia ) {
+		navigator.getUserMedia = function( constraints, successCallback, errorCallback ) {
+			var p = navigator.mediaDevices.getUserMedia(constraints);
+			p.then( successCallback );
+			p.catch( errorCallback );
+		}
+	} else {
+		console.log('hier!');
+		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+	}
 	// check canvas, canvas context 2d, canvas toDataUrl support
-	
 	//
 	//
 	$.extend( $ , { recorder : {
@@ -109,7 +117,10 @@
 			},
 			start : function(){
 				var $self = this;
-				navigator.getUserMedia({
+				
+				
+				
+				var p = navigator.getUserMedia({
 					video: this.options.camera,
 					audio: this.options.microphone
 				}, function( localMediaStream ) { // success
@@ -126,18 +137,18 @@
 					$(this.element).on('playing', function(e) {
 						self.state = 'started';
 						$self.trigger( $.Event('recorder:state:started') , $self.element );
-						
 					});
 				}.bind(this), function(e) { 
 					$self.state = 'error';
 					if ( e.code === 1 || e.name == "PermissionDeniedError" ) {
-						$self.trigger( $.Event('recorder:state:permissionerror') , $self.element );
+						$self.trigger( $.Event('recorder:state:permissionerror') , [$self.element, e] );
 					} else {
-						$self.trigger( $.Event('recorder:state:error') , $self.element );
+						$self.trigger( $.Event('recorder:state:error') , [$self.element, e] );
 					}
 				});
 				this.state = 'waiting';
 				this.trigger( $.Event('recorder:state:waiting') , this.element );
+				
 			},
 			stop : function(){
 				console.log(stream);

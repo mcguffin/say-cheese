@@ -241,8 +241,10 @@
 					self.$el.append('<div class="error recorder-inline-content"><h3>'+l10n.an_error_occured+'</h3><p><a class="error-try-again" href="#">'+l10n.try_again+'</a></p></div>');
 					self._instruments.hide();
 				});
-				this._webcam.on('recorder:state:permissionerror',function(e){
-					self.$el.append('<div class="error recorder-inline-content"><h3>'+l10n.please_allow_camera_message+'</h3><p><a class="error-try-again" href="#">'+l10n.try_again+'</a></p></div>');
+				this._webcam.on('recorder:state:permissionerror',function( event, element, err ){
+					console.log(arguments);
+					var msg = err.message || l10n.please_allow_camera_message;
+					self.$el.append('<div class="error recorder-inline-content"><h3>'+msg+'</h3><p><a class="error-try-again" href="#">'+l10n.try_again+'</a></p></div>');
 					self._instruments.hide();
 				});
 				this._webcam.on('recorder:state:stopped',function(e){
