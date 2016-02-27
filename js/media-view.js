@@ -207,9 +207,9 @@
 					self.stop();
 					return false;
 				});
-			this._instruments = $('<div class="instruments">\
-					<a href="#" class="button recorder-record button-primary button-action"><span class="dashicons dashicons-video-alt2"></span>'+l10n.record+'</a>\
-				</div>')
+			this._instruments = $('<div class="instruments">'
+					+ '<a href="#" class="button recorder-record button-primary button-action"><span class="dashicons dashicons-video-alt2"></span>'+l10n.record+'</a>'
+				+ '</div>')
 				.appendTo(this._recorder);
 			this.$el.on('click','.error-try-again',function(){
 				self.start();

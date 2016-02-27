@@ -12,10 +12,16 @@ License: GPL2
 
 
 function cheese_admin_init() {
-	wp_register_script( 'jquery-webcam-recorder' , plugins_url( 'js/jquery-webcam-recorder.js' , __FILE__ ) , array( 'jquery' , 'swfobject' ) , '0.0.1' );
-	wp_register_script( 'jquery-pasteboard' , plugins_url( 'js/jquery.pasteboard.js' , __FILE__ ) , array( 'jquery' ) , '0.0.1' );
-	wp_register_script( 'cheese' , plugins_url( 'js/cheese.js' , __FILE__ ) , array( 'jquery' ) , '0.0.1' );
-	wp_register_script( 'cheese-media-view' , plugins_url( 'js/media-view.js' , __FILE__ ) , array('media-editor' , 'jquery-webcam-recorder' , 'jquery-pasteboard' , 'cheese' ) , '0.0.1' );
+	$version = '0.1.1';
+	if ( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ) {
+		wp_register_script( 'webrtc-adapter' , plugins_url( 'js/adapter-latest.js' , __FILE__ ) , array( ) , $version );
+		wp_register_script( 'jquery-webcam-recorder' , plugins_url( 'js/jquery-webcam-recorder.js' , __FILE__ ) , array( 'jquery' , 'swfobject', 'webrtc-adapter' ) , $version );
+		wp_register_script( 'jquery-pasteboard' , plugins_url( 'js/jquery.pasteboard.js' , __FILE__ ) , array( 'jquery' ) , $version );
+		wp_register_script( 'cheese' , plugins_url( 'js/cheese.js' , __FILE__ ) , array( 'jquery' ) , $version );
+		wp_register_script( 'cheese-media-view' , plugins_url( 'js/media-view.js' , __FILE__ ) , array('media-editor' , 'jquery-webcam-recorder' , 'jquery-pasteboard' , 'cheese' ) , $version );
+	} else {
+		wp_register_script( 'cheese' , plugins_url( 'js/cheese.min.js' , __FILE__ ) , array( 'jquery', 'swfobject', 'media-editor' ) , $version );
+	}
 	wp_localize_script( 'cheese' , 'cheese_l10n' , array(
 		'webcam_record' 				=> __('Webcam Record' , 'say-cheese' ),
 		'try_again' 					=> __('Try again' , 'say-cheese' ),
@@ -51,7 +57,11 @@ add_action( 'plugins_loaded' , 'cheese_loaded');
 function cheese_load() {
 	if ( ! did_action('wp_enqueue_media') ) 
 		wp_enqueue_media();
-	wp_enqueue_script( 'cheese-media-view');
+	if ( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ) {
+		wp_enqueue_script( 'cheese-media-view');
+	} else {
+		wp_enqueue_script( 'cheese');
+	}
 	wp_enqueue_style( 'cheese' );
 }
 add_action( 'wp_enqueue_media' , 'cheese_load' );

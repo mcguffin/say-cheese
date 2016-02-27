@@ -30,16 +30,6 @@
 	}
 	
 	window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
-	if ( !!navigator.mediaDevices && !! navigator.mediaDevices.getUserMedia ) {
-		navigator.getUserMedia = function( constraints, successCallback, errorCallback ) {
-			var p = navigator.mediaDevices.getUserMedia(constraints);
-			p.then( successCallback );
-			p.catch( errorCallback );
-		}
-	} else {
-		console.log('hier!');
-		navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
-	}
 	// check canvas, canvas context 2d, canvas toDataUrl support
 	//
 	//
@@ -105,7 +95,7 @@
 							var elem = document.createElement('canvas');
 							return !!(elem.getContext && elem.getContext('2d'));
 						})() &&
-						!!navigator.getUserMedia,
+						!!navigator.mediaDevices.getUserMedia,
 			
 			create : function() {
 				var $self = this;
@@ -118,33 +108,34 @@
 			start : function(){
 				var $self = this;
 				
-				
-				
-				var p = navigator.getUserMedia({
+				navigator.mediaDevices.getUserMedia({
 					video: this.options.camera,
 					audio: this.options.microphone
-				}, function( localMediaStream ) { // success
-					if (this.element.mozSrcObject !== undefined) {
-						this.element.mozSrcObject = localMediaStream;
-					} else {
-						this.element.src = (window.URL && window.URL.createObjectURL(localMediaStream)) || localMediaStream;
-					};
-					stream = localMediaStream;
-					// should be separated from this class?
-				
-					// Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
-					// See crbug.com/110938.
-					$(this.element).on('playing', function(e) {
-						self.state = 'started';
-						$self.trigger( $.Event('recorder:state:started') , $self.element );
-					});
-				}.bind(this), function(e) { 
-					$self.state = 'error';
-					if ( e.code === 1 || e.name == "PermissionDeniedError" ) {
-						$self.trigger( $.Event('recorder:state:permissionerror') , [$self.element, e] );
-					} else {
-						$self.trigger( $.Event('recorder:state:error') , [$self.element, e] );
-					}
+				})
+				.then(
+					function( localMediaStream ) { // success
+						if (this.element.mozSrcObject !== undefined) {
+							this.element.mozSrcObject = localMediaStream;
+						} else {
+							this.element.src = (window.URL && window.URL.createObjectURL(localMediaStream)) || localMediaStream;
+						};
+						stream = localMediaStream;
+						// should be separated from this class?
+		
+						// Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
+						// See crbug.com/110938.
+						$(this.element).on('playing', function(e) {
+							self.state = 'started';
+							$self.trigger( $.Event('recorder:state:started') , $self.element );
+						});
+				}.bind(this) )
+				.catch( function(e) { 
+						$self.state = 'error';
+						if ( e.code === 1 || e.name == "PermissionDeniedError" ) {
+							$self.trigger( $.Event('recorder:state:permissionerror') , [$self.element, e] );
+						} else {
+							$self.trigger( $.Event('recorder:state:error') , [$self.element, e] );
+						}
 				});
 				this.state = 'waiting';
 				this.trigger( $.Event('recorder:state:waiting') , this.element );
