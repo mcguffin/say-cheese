@@ -91,9 +91,17 @@ There are two filters allowing you to programmatically disable the plugin featur
 
 ToDo:
 -----
- - [x] disable paste in safari.
- - [ ] MediaFrame.Select: open library tab after upload
- - [ ] media options: enable Paste / enable Webcam
+ - [ ] UX
+	 - [x] disable paste in safari.
+	 - [x] disable record in chrome if not https
+	 - [x] MediaFrame.Select: open library tab after upload
+	 - [ ] media options: enable Paste / enable Webcam
+ - [ ] PHP
+ 	- [ ] Admin class
+ 	- [ ] Settings class
+ - [ ] JS
+ 	- [x] media-view: use wp.media.cheese namespace
+ 	- [ ] rework everything
  - [ ] Upload option Format:  ( ) png, ( ) jpeg (paste: defaults to pasted data, record: defaults to jpeg)
  - [ ] Select recording size (QVGA, VGA, SVGA, HD, FullHD)
  	- [ ] Find reliable way to predict supported WebcamSizes
@@ -105,10 +113,8 @@ ToDo:
 		- [x] Mac
 		- [ ] Win
 		- [ ] Linux
- - [ ] Messages after upload Error
+ - [ ] Add Messages after upload Error
  - [ ] Deprecate Flash fallback
- - [ ] Scripts
- 	- [x] media-view: use wp.media.cheese namespace
 
 Support
 -------
