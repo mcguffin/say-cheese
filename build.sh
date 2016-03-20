@@ -8,6 +8,7 @@ tmp_min=./js/tmp.js
 rm $combined
 touch $combined
 
+cp ./src/adapter/adapter-latest.js ./js/adapter-latest.js
 
 # adapter latest
 java -jar \
