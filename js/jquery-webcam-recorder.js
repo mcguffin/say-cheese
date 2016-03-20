@@ -133,7 +133,6 @@
 						$self.trigger( $.Event('recorder:state:permissionerror') , [$self.element, e] );
 					} else {
 						$self.trigger( $.Event('recorder:state:error') , [$self.element, e] );
-						console.log(e);
 					}
 				});
 				this.state = 'waiting';
@@ -188,7 +187,6 @@
 				
 				window.statechange = function(arg) {
 					$self.state = arg;
-					console.log('statechange',arg);
 					$self.trigger( $.Event('recorder:state:'+arg) , $self.element );
 				}
 				
@@ -215,7 +213,6 @@
 						clearInterval(create_swf_interval);
 					}
 				},100);
-				console.log('create',this);
 			},
 			start : function() {
 				var self = this;

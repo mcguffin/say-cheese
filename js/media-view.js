@@ -243,7 +243,6 @@
 					self._instruments.hide();
 				});
 				this._webcam.on('recorder:state:permissionerror',function( event, element, err ){
-					console.log(arguments);
 					var msg = err.message || l10n.please_allow_camera_message;
 					self.$el.append('<div class="error recorder-inline-content"><h3>'+msg+'</h3><p><a class="error-try-again" href="#">'+l10n.try_again+'</a></p></div>');
 					self._instruments.hide();
@@ -305,7 +304,6 @@
 			
 		},
 		start : function(){
-			console.log("pasteborad.start");
 			var self = this;
 			this._pasteboard
 				.imagepastebox({
@@ -322,7 +320,6 @@
 			return this;
 		},
 		stop : function(){
-			console.log("pasteborad.stop");
 			this._pasteboard
 				.imagepastebox('off')
 				.off('pasteimage');
@@ -440,13 +437,10 @@
 			this.controller.on( 'action:uploaded:dataimage',				this.uploadDone,		this );
 			this.controller.on( 'error:uploaded:dataimage',					this.uploadDone,		this );
 			this._modal.on( 'close', this.back, this );
-			console.log('grabberbutton:initialize');
 		},
 		uploadDone:function(){
-			console.log('GrabberButton','action:uploaded:dataimage');
 // 			this._grabber.dismiss();
  			this._modal.close();
-			console.log(this,this._modal,this._grabber);
 		},
 		back: function () {
 			this._grabber.dismiss();
@@ -459,7 +453,6 @@
 				this.controller.deactivateMode( 'edit' ).activateMode( this._grabber.getAction() );
 				this._modal.open();
 				this._grabber.startGrabbing();
-				console.log(this.controller);
 			}
 		}
 

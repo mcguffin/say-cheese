@@ -86,7 +86,6 @@
 		// add handlers
 		contentCreateRecord: function( content ){
 			var state = this.state();
-			console.log(content,this);
 			content.view = new media.view.DataSourceImageGrabber({ controller:this , grabber: wp.media.cheese.view.WebcamRecorder });
 		},
 		contentCreatePasteboard: function( content ){
