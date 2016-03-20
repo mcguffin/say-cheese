@@ -39,6 +39,14 @@ cat $tmp_min >> $combined
 # cheese
 java -jar \
 	$CLOSURE_COMPILER \
+	--js ./js/cheese-base.js \
+	--js_output_file $tmp_min
+
+cat $tmp_min >> $combined
+
+# cheese
+java -jar \
+	$CLOSURE_COMPILER \
 	--js ./js/cheese.js \
 	--js_output_file $tmp_min
 
