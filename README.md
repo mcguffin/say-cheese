@@ -107,6 +107,8 @@ ToDo:
 		- [ ] Linux
  - [ ] Messages after upload Error
  - [ ] Deprecate Flash fallback
+ - [ ] Scripts
+ 	- [x] media-view: use wp.media.cheese namespace
 
 Support
 -------

@@ -1,9 +1,8 @@
 (function($,window,o){
 	var cheese = window.cheese,
-		media  = wp.media,
-		Button = media.view.Button,
-		Modal  = media.view.Modal,
-		l10n   = media.view.l10n = typeof _wpMediaViewsL10n === 'undefined' ? {} : _wpMediaViewsL10n,
+		Button = wp.media.view.Button,
+		Modal  = wp.media.view.Modal,
+		l10n   = wp.media.view.l10n = typeof _wpMediaViewsL10n === 'undefined' ? {} : _wpMediaViewsL10n,
 		mediaFrame, imageUploader;
 
 	l10n = _.extend(l10n,cheese_l10n);
@@ -14,7 +13,7 @@
 		oldMFInit.apply(this,arguments);
 	}
 	
-	media.view.NameInput = media.View.extend({
+	wp.media.cheese.view.NameInput = wp.media.View.extend({
 		tagName:   'label',
 		className: 'setting',
 		_input : null,
@@ -35,29 +34,30 @@
 		},
 		val : function(){
 			var v = this._input.val();
-			return v || this.options.defaultValue;//l10n.image;
+			return v || this.options.defaultValue;
 		}
 	});
 	
 	
-	media.view.ActionButton = media.view.Button.extend({
+	wp.media.cheese.view.ActionButton = Button.extend({
 		dashicon : 'yes',
 		render : function(){
 			_.defaults( this.options, {
 				dashicon : 'yes',
 			});
-			media.view.Button.prototype.render.apply(this,arguments);
+			var ret = wp.media.view.Button.prototype.render.apply(this,arguments);
 			this.$el.addClass('button-action');
 			this.$el.prepend('<span class="dashicons dashicons-'+this.options.dashicon+'"></span>');
 			if ( this.model.disabled )
 				this.$el.addClass('disabled');
 			else
 				this.$el.removeClass('disabled');
+			return ret;
 		}
 	});
 	
 
-	media.view.DataSourceImageUploader = media.View.extend({
+	wp.media.cheese.view.DataSourceImageUploader = wp.media.View.extend({
 		tagName:   'div',
 		className: 'data-source-image',
 		controller:null,
@@ -77,27 +77,27 @@
 			var self = this;
 			imageUploader = this;
 
-			var instr = new media.View({
+			var instr = new wp.media.View({
 				tagName    : 'div',
 				className  : 'instruments',
-				controller : this
+				controller : this.controller
 			});
-			this.discardBtn = new media.view.ActionButton({
+			this.discardBtn = new wp.media.cheese.view.ActionButton({
 				className : 'image-discard',
 				style:'secondary',
 				text : l10n.try_again,
 				dashicon : 'arrow-left',
-				controller:this,
+				controller:this.controller,
 				click:function(){ self.discardImage.apply(self,arguments); }
 			});
-			this.nameInput = new media.view.NameInput({
+			this.nameInput = new wp.media.cheese.view.NameInput({
 				defaultValue : this.options.defaultFileName
 			});
-			this.uploadBtn = new media.view.ActionButton({
+			this.uploadBtn = new wp.media.cheese.view.ActionButton({
 				className : 'image-upload',
 				style:'primary',
 				text : l10n.upload,
-				controller:this,
+				controller:this.controller,
 				click:function(){ self.uploadImage.apply(self,arguments); }
 			});
 			
@@ -140,14 +140,15 @@
 		uploadImage : function() {
 			this.bindEvents();
 			var blob = this.image.getAsBlob( 'image/png' ),
-				self = this, uploader = new wp.Uploader();
-
+				self = this;
 
 			blob.detach(blob.getSource());
 			blob.name = this.nameInput.val() + '.png';
 			mediaFrame.uploader.uploader.uploader.addFile( blob , this.nameInput.val() + '.png' );
-			
+
 			this.disabled(true);
+
+			this.controller.trigger( 'action:upload:dataimage' , this );
 		},
 		show:function(){
 			this.$el.show();
@@ -163,16 +164,16 @@
 			this.discardBtn.render();
 		},
 		_uploadSuccessHandler : function(){
-			imageUploader.controller.trigger( 'action:uploaded:dataimage' );
+			this.controller.trigger( 'action:uploaded:dataimage' );
 			imageUploader.disabled(false);
 		},
 		_uploadErrorHandler : function(){
-			imageUploader.controller.trigger( 'error:uploaded:dataimage' );
+			this.controller.trigger( 'error:uploaded:dataimage' );
 			imageUploader.disabled(false);
 		},
 		bindEvents : function(){
-			mediaFrame.uploader.uploader.uploader.bind( 'FileUploaded' , this._uploadSuccessHandler );
-			mediaFrame.uploader.uploader.uploader.bind( 'Error' , this._uploadErrorHandler );
+			mediaFrame.uploader.uploader.uploader.bind( 'FileUploaded',	this._uploadSuccessHandler,	this );
+			mediaFrame.uploader.uploader.uploader.bind( 'Error',		this._uploadErrorHandler,	this );
 		}
 // doesn't work.
 // 		,
@@ -184,7 +185,7 @@
 	
 	
 	
-	media.view.WebcamRecorder = media.View.extend({
+	wp.media.cheese.view.WebcamRecorder = wp.media.View.extend({
 		tagName:   'div',
 		className: 'webcam-recorder',
 		controller:null,
@@ -284,7 +285,7 @@
 		}
 	});
 	
-	media.view.Pasteboard = media.View.extend({
+	wp.media.cheese.view.Pasteboard = wp.media.View.extend({
 		tagName:   'div',
 		className: 'pasteboard',
 		controller:null,
@@ -297,13 +298,14 @@
 			});
 			var self = this;
 			
-			this._content = $('<div class="pasteboard-inline-content"><h3>'+l10n.paste_instructions+'</h3></div>')
+			this._content = $('<div class="pasteboard-inline-content"><h3>' + l10n.paste_instructions + '</h3></div>')
 				.appendTo(this.$el);
-			this._pasteboard = $('<div id="pasteboard-injector"></div>')
-				.appendTo(this._content);
+			this._pasteboard = $( '<div id="pasteboard-injector"></div>' )
+				.appendTo( this._content );	
 			
 		},
 		start : function(){
+			console.log("pasteborad.start");
 			var self = this;
 			this._pasteboard
 				.imagepastebox({
@@ -312,19 +314,18 @@
 						no_processible_image_pasted : l10n.paste_error_webkit_fake_image,
 					}
 				})
-				.on('pasteimage' , '' , function( e , data ){
-					self.controller.trigger('action:create:dataimage', self , data );
-					return false;
+				.on('pasteimage' , function( e , data ) {
+					self._onPaste( data );
 				} )
 				.focus();
-			this._content.show();
+			this.listenTo( this.pasteboard, 'pasteimage' , this._onPaste );
 			return this;
 		},
 		stop : function(){
+			console.log("pasteborad.stop");
 			this._pasteboard
 				.imagepastebox('off')
 				.off('pasteimage');
-			this._content.hide();
 			return this;
 		},
 		show:function(){
@@ -334,10 +335,13 @@
 		hide:function(){
 			this.$el.hide();
 			return this;
+		},
+		_onPaste : function( data ) {
+			this.controller.trigger( 'action:create:dataimage', this , data );
 		}
 	});
 
-	media.view.DataSourceImageGrabber = media.View.extend({
+	wp.media.cheese.view.DataSourceImageGrabber = wp.media.View.extend({
 		tagName:   'div',
 		className : 'image-grabber',
 		
@@ -346,37 +350,49 @@
 		
 		initialize : function() {
 			_.defaults( this.options, {
-				grabber : media.view.WebcamRecorder
+				grabber : wp.media.cheese.view.WebcamRecorder
 			});
-			var defaultFileName = (this.options.grabber == media.view.WebcamRecorder) ? l10n.snapshot : ((this.options.grabber == media.view.Pasteboard) ? l10n.pasted : l10n.image ),
-				title = (this.options.grabber == media.view.WebcamRecorder) ? l10n.take_snapshot : ((this.options.grabber == media.view.Pasteboard) ? l10n.copy_paste : l10n.image ),
-				wrap = new media.View({
+			var defaultFileName = (this.options.grabber == wp.media.cheese.view.WebcamRecorder) 
+						? l10n.snapshot 
+						: ((this.options.grabber == wp.media.cheese.view.Pasteboard) 
+							? l10n.pasted 
+							: l10n.image 
+						),
+				title 		= (this.options.grabber == wp.media.cheese.view.WebcamRecorder) 
+								? l10n.take_snapshot 
+								: ((this.options.grabber == wp.media.cheese.view.Pasteboard) 
+									? l10n.copy_paste 
+									: l10n.image 
+								),
+				wrap		= new wp.media.View({
 					className : 'image-grabber-content',
 					tagName : 'div',
-					controller:this
+					controller:this.controller
 				}), 
-				titleDiv = new media.View({
+				titleDiv	= new wp.media.View({
 					className : 'media-frame-title',
 					tagName : 'div'
 				}),
-				titleH1 = new media.View({
+				titleH1		= new wp.media.View({
 					tagName : 'h1'
 				});
-			this._grabber  = new this.options.grabber({controller:this});
-			this._uploader = new media.view.DataSourceImageUploader({controller:this,defaultFileName:defaultFileName});
-			wrap.views.add(this._grabber);
-			wrap.views.add(this._uploader);
-			titleH1.$el.text(title);
-			titleDiv.views.add(titleH1);
-			this.views.add(titleDiv);
-			this.views.add(wrap);
-			
-			this.on( 'action:create:dataimage' , this.imageCreated );
-			this.on( 'action:discard:dataimage' , this.startGrabbing );
-			this.on( 'action:uploaded:dataimage' , this.imageUploaded );
-			this.on( 'error:uploaded:dataimage' , this.imageUploadError );
+
+			this._grabber  = new this.options.grabber( { controller	: this.controller } );
+			this._uploader = new wp.media.cheese.view.DataSourceImageUploader( {	controller		: this.controller,
+																		defaultFileName	: defaultFileName
+																	});
+
+			wrap.views.add( this._grabber );
+			wrap.views.add( this._uploader );
+			titleH1.$el.text( title );
+			titleDiv.views.add( titleH1 );
+			this.views.add( titleDiv );
+			this.views.add( wrap );
+
+			this.controller.on( 'action:create:dataimage',		this.imageCreated, 		this );
+			this.controller.on( 'action:discard:dataimage',		this.startGrabbing,		this );
 		},
-		imageCreated : function( grabber , imageData ){
+		imageCreated : function( grabber , imageData ) {
 			this._grabber.stop().hide();
 			this._uploader.show().setImageData(imageData);
 		},
@@ -384,12 +400,6 @@
 			this._uploader.hide();
 			this._grabber.show().start();
 			return this;
-		},
-		imageUploaded : function() {
-			this.controller.trigger( 'action:uploaded:dataimage' );
-		},
-		imageUploadError : function() {
-			this.controller.trigger( 'error:uploaded:dataimage' );
 		},
 		getAction : function(){
 			return this._grabber.action;
@@ -400,8 +410,8 @@
 		}
 	});
 
-	
-	media.view.GrabberButton = Button.extend({
+	// at media grid view
+	wp.media.cheese.view.GrabberButton = Button.extend({
 		className:  'grabber-button',
 		_grabber : null,
 		_modal : null,
@@ -413,7 +423,7 @@
 				grabber : null,
 				title   : 'Image Grabber'
 			});
-			this._grabber = new media.view.DataSourceImageGrabber({ 
+			this._grabber = new wp.media.cheese.view.DataSourceImageGrabber({ 
 				controller: this.controller , 
 				grabber:    this.options.grabber 
 			});
@@ -421,19 +431,22 @@
 				controller: $(), // use empty controller. modal must not propagate 'ready' event, otherwise Backbone.History gets started twice 
 				title:      this.options.title
 			});
-			
+
 			this._modal.content( this._grabber );
-			
+
 			action = this._grabber.getAction();
-			this.listenTo( this.controller, action+':activate '+action+':deactivate', this.toggleModeHandler );
-			this.listenTo( this.controller, action+':action:done', this.back );
-			this.listenTo( this.controller , 'action:uploaded:dataimage', this.uploadDone );
-			this.listenTo( this.controller , 'error:uploaded:dataimage', this.uploadDone );
-			this.listenTo( this._modal, 'close', this.back );
+			this.controller.on( action+':activate '+action+':deactivate',	this.toggleModeHandler,	this );
+			this.controller.on( action+':action:done', 						this.back,				this );
+			this.controller.on( 'action:uploaded:dataimage',				this.uploadDone,		this );
+			this.controller.on( 'error:uploaded:dataimage',					this.uploadDone,		this );
+			this._modal.on( 'close', this.back, this );
+			console.log('grabberbutton:initialize');
 		},
 		uploadDone:function(){
-			this._grabber.dismiss();
-			this._modal.close();
+			console.log('GrabberButton','action:uploaded:dataimage');
+// 			this._grabber.dismiss();
+ 			this._modal.close();
+			console.log(this,this._modal,this._grabber);
 		},
 		back: function () {
 			this._grabber.dismiss();
@@ -446,6 +459,7 @@
 				this.controller.deactivateMode( 'edit' ).activateMode( this._grabber.getAction() );
 				this._modal.open();
 				this._grabber.startGrabbing();
+				console.log(this.controller);
 			}
 		}
 
