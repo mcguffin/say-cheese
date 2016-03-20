@@ -26,10 +26,10 @@
 					no_processible_image_pasted : 'Your Browser does not support pasting processible image data.',
 				}
 			};
-			
-			if ( args == 'off' )
-				return this.off('paste').off('blur').off('keydown').removeAttr('contenteditable','true').blur();
 
+			if ( args == 'off' ) {
+				return this.off('paste').off('blur').off('keydown').prop('contenteditable',false).blur();
+			}
 			options = $.extend(args,options);
 			
 			this.on('paste' , function( event ) {
@@ -137,7 +137,7 @@
 					}
 					waiting || event.preventDefault();
 				})
-				.attr('contenteditable','true')
+				.prop('contenteditable',true)
 				.on('keydown',function(e){
 					$(this).text('');
 				})
