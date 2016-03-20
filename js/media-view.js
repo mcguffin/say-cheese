@@ -2,16 +2,18 @@
 	var cheese = window.cheese,
 		Button = wp.media.view.Button,
 		Modal  = wp.media.view.Modal,
-		l10n   = wp.media.view.l10n = typeof _wpMediaViewsL10n === 'undefined' ? {} : _wpMediaViewsL10n,
-		mediaFrame, imageUploader;
+		l10n   = wp.media.view.l10n = typeof _wpMediaViewsL10n === 'undefined' ? {} : _wpMediaViewsL10n;
 
 	l10n = _.extend(l10n,cheese_l10n);
 	
-	var oldMFInit = wp.media.view.MediaFrame.prototype.initialize;
-	wp.media.view.MediaFrame.prototype.initialize = function() {
-		mediaFrame = this;
-		oldMFInit.apply(this,arguments);
-	}
+// 	_.extend( wp.media.view.MediaFrame.prototype, {
+// 		_parentInitialize: wp.media.view.MediaFrame.prototype.initialize,
+// 		initialize: function() {
+// 			mediaFrame = this;
+// 			console.log("setMediaFrame");
+// 			this._parentInitialize.apply(this,arguments);
+// 		}
+// 	} );
 	
 	wp.media.cheese.view.NameInput = wp.media.View.extend({
 		tagName:   'label',
@@ -75,7 +77,6 @@
 				defaultFileName : l10n.image
 			});
 			var self = this;
-			imageUploader = this;
 
 			var instr = new wp.media.View({
 				tagName    : 'div',
@@ -110,15 +111,16 @@
 			this.$imageContainer = false;
 		},
 		setImageData : function( data ) {
-			var container = this.$el.find('.image-container').html('').get(0);
+			var container = this.$el.find('.image-container').html('').get(0),
+				self = this;
 			if ( this.image ) 
 				this.image.destroy();
-			
+			console.log(this.controller);
 			this.image = new o.Image();
 			this.image.onload = function() {
-				var opts = mediaFrame.uploader.uploader.uploader.getOption('resize'),
-					scale = Math.max(opts.width/this.width,opts.height/this.height);
-				!!opts && (scale < 1) && this.downsize(this.width*scale,this.height*scale);
+				var opts = self.controller.uploader.uploader.uploader.getOption('resize'),
+					scale = Math.max( opts.width / this.width, opts.height / this.height );
+				!!opts && (scale < 1) && this.downsize( this.width*scale, this.height*scale );
 				this.embed( container );
 			}
 			this.image.bind('Resize', function(e) {
@@ -139,12 +141,14 @@
 		},
 		uploadImage : function() {
 			this.bindEvents();
-			var blob = this.image.getAsBlob( 'image/png' ),
+			var type = 'image/png',
+				blob = this.image.getAsBlob( type ),
 				self = this;
 
 			blob.detach( blob.getSource() );
 			blob.name = this.nameInput.val() + '.png';
-			mediaFrame.uploader.uploader.uploader.addFile( blob , this.nameInput.val() + '.png' );
+			blob.type = type;
+			this.controller.uploader.uploader.uploader.addFile( blob , this.nameInput.val() + '.png' );
 
 			this.disabled(true);
 
@@ -165,21 +169,21 @@
 		},
 		_uploadSuccessHandler : function(){
 			this.controller.trigger( 'action:uploaded:dataimage' );
-			imageUploader.disabled(false);
+			this.disabled(false);
 		},
 		_uploadErrorHandler : function(){
 			this.controller.trigger( 'error:uploaded:dataimage' );
-			imageUploader.disabled(false);
+			this.disabled(false);
 		},
 		bindEvents : function(){
-			mediaFrame.uploader.uploader.uploader.bind( 'FileUploaded',	this._uploadSuccessHandler,	this );
-			mediaFrame.uploader.uploader.uploader.bind( 'Error',		this._uploadErrorHandler,	this );
+			this.controller.uploader.uploader.uploader.bind( 'FileUploaded',	this._uploadSuccessHandler,	this );
+			this.controller.uploader.uploader.uploader.bind( 'Error',		this._uploadErrorHandler,	this );
 		}
 // doesn't work.
 // 		,
 // 		unbindEvents : function() {
-// 			mediaFrame.uploader.uploader.uploader.unbind( 'FileUploaded' , this._uploadSuccessHandler , false );
-// 			mediaFrame.uploader.uploader.uploader.unbind( 'Error' , this._uploadErrorHandler , false );
+// 			this.controller.uploader.uploader.uploader.unbind( 'FileUploaded' , this._uploadSuccessHandler , false );
+// 			this.controller.uploader.uploader.uploader.unbind( 'Error' , this._uploadErrorHandler , false );
 // 		}
 	});
 	
@@ -375,9 +379,10 @@
 				});
 
 			this._grabber  = new this.options.grabber( { controller	: this.controller } );
-			this._uploader = new wp.media.cheese.view.DataSourceImageUploader( {	controller		: this.controller,
-																		defaultFileName	: defaultFileName
-																	});
+			this._uploader = new wp.media.cheese.view.DataSourceImageUploader( {	
+									controller		: this.controller,
+									defaultFileName	: defaultFileName
+								});
 
 			wrap.views.add( this._grabber );
 			wrap.views.add( this._uploader );

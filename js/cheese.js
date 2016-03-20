@@ -11,29 +11,6 @@
 		}
 	});
 
-// 	var cheese = {
-// 		supports : {
-// 			paste: ! is_safari && cheese_l10n.enable_pasteboard && (('paste' in document) || ('onpaste' in document) || typeof(window.onpaste) === 'object'),
-// 			webcam_recording: cheese_l10n.enable_snapshot && $.recorder.supported,//!!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)
-// 		},
-// 		
-// 		create_webcam_recorder : function( parent , options ) {
-// 			$.extend( true , options || {} , {
-// 					constraints : {
-// 						video : {
-// 							width:1280, 
-// 							height:720 
-// 						}
-// 					}
-// 				});
-// 			return $(parent)
-// 				.recorder(options);
-// 		},
-// 		view: {}
-// 		// upload_data_url: 
-// 	};
-
-	// extend media input methods.
 
 
 
@@ -42,29 +19,29 @@
 	 */
 	// add states to browse router
 	_.extend( wp.media.view.MediaFrame.Select.prototype, {
-
+		_parentInitialize: wp.media.view.MediaFrame.Select.prototype.initialize,
+		initialize: function() {
+			this._parentInitialize.apply( this, arguments );
+			this.bindCheeseHandlers();
+		},
 		_parentBrowseRouter: wp.media.view.MediaFrame.Select.prototype.browseRouter,
 		browseRouter : function( view ) {
 			this._parentBrowseRouter.apply(this,arguments);
-			if (cheese.supports.webcam_recording ) 
+			if ( wp.media.cheese.supports.webcam_recording ) 
 				view.set({record:{
 					text:     l10n.webcam_record,
 					priority: 30
 				}});
 		
-			if ( cheese.supports.paste )
+			if ( wp.media.cheese.supports.paste )
 				view.set({pasteboard:{
 					text:     l10n.copy_paste,
 					priority: 35
 				}});
 		},
 
-		_parentBindHandlers: wp.media.view.MediaFrame.Select.prototype.bindHandlers,
-		bindHandlers: function() {
+		bindCheeseHandlers: function() {
 			var previousContent = false;
-			// parent handlers
-			bindHandlers.apply( this, arguments );
-			// add recorder create handler.
 		
 			// dismiss content on close
 			this.on( 'content:render close' , function(content){
@@ -84,23 +61,22 @@
 			frame = this;
 		},
 		// add handlers
-		contentCreateRecord: function( content ){
+		contentCreateRecord: function( content ) {
 			var state = this.state();
-			content.view = new media.view.DataSourceImageGrabber({ controller:this , grabber: wp.media.cheese.view.WebcamRecorder });
+			content.view = new wp.media.cheese.view.DataSourceImageGrabber({ controller:this , grabber: wp.media.cheese.view.WebcamRecorder });
 		},
-		contentCreatePasteboard: function( content ){
+		contentCreatePasteboard: function( content ) {
 			var state = this.state();
-			content.view = new media.view.DataSourceImageGrabber({ controller:this , grabber: wp.media.cheese.view.Pasteboard });
+			content.view = new wp.media.cheese.view.DataSourceImageGrabber({ controller:this , grabber: wp.media.cheese.view.Pasteboard });
 		},
-		contentRenderGrabber: function( content ){
+		contentRenderGrabber: function( content ) {
 			content.startGrabbing();
 		},
-		uploadedDataImage: function( content ){
-
-	//		this.setState('browse');
-	// 		var obj = {view:null};
-	// 		this.browseContent(obj);
-	// 		this.content.set( obj.view );
+		uploadedDataImage: function( content ) {
+			var obj = {view:null};
+			this.browseContent(obj);
+			this.content.set( obj.view );
+			this.router.get().select('browse')
 		}
 	});
 	
