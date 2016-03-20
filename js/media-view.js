@@ -142,7 +142,7 @@
 			var blob = this.image.getAsBlob( 'image/png' ),
 				self = this;
 
-			blob.detach(blob.getSource());
+			blob.detach( blob.getSource() );
 			blob.name = this.nameInput.val() + '.png';
 			mediaFrame.uploader.uploader.uploader.addFile( blob , this.nameInput.val() + '.png' );
 
