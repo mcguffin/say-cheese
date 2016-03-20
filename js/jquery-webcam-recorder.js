@@ -142,18 +142,20 @@
 			},
 			stop : function(){
 				var tracks, s;
-				if ( !! stream && !! stream.stop ) {
-					stream.stop();
-				} else if ( !! stream.getVideoTracks ) {
-					tracks = stream.getVideoTracks();
-					for ( s in tracks ) {
-						if ( tracks[s].stop ) {
-							tracks[s].stop();
+				if ( !! stream ) {
+					if ( !! stream.stop ) {
+						stream.stop();
+					} else if ( !! stream.getVideoTracks ) {
+						tracks = stream.getVideoTracks();
+						for ( s in tracks ) {
+							if ( tracks[s].stop ) {
+								tracks[s].stop();
+							}
 						}
 					}
 				}
 				$(this.element).off('playing');
-				this.element.src = null;
+//				this.element.src = null;
 				this.state = 'stopped';
 				this.trigger( $.Event('recorder:state:stopped') , this.element );
 			},
