@@ -105,8 +105,6 @@ ToDo:
  - [ ] Upload option Format:  ( ) png, ( ) jpeg (paste: defaults to pasted data, record: defaults to jpeg)
  - [ ] Select recording size (QVGA, VGA, SVGA, HD, FullHD)
  	- [ ] Find reliable way to predict supported WebcamSizes
- - [x] Modal views: 
- 	- [x] set title
  - [x] use different default file names for paste and snapshot
  - [ ] Documentation
  	- [ ] Matrix copy-from / browser+os -> result

@@ -142,13 +142,14 @@
 		uploadImage : function() {
 			this.bindEvents();
 			var type = 'image/png',
+				name = this.nameInput.val() + '.png',
 				blob = this.image.getAsBlob( type ),
 				self = this;
 
 			blob.detach( blob.getSource() );
-			blob.name = this.nameInput.val() + '.png';
+			blob.name = name;
 			blob.type = type;
-			this.controller.uploader.uploader.uploader.addFile( blob , this.nameInput.val() + '.png' );
+			this.controller.uploader.uploader.uploader.addFile( blob , name );
 
 			this.disabled(true);
 
