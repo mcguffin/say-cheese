@@ -115,7 +115,7 @@
 				self = this;
 			if ( this.image ) 
 				this.image.destroy();
-			console.log(this.controller);
+
 			this.image = new o.Image();
 			this.image.onload = function() {
 				var opts = self.controller.uploader.uploader.uploader.getOption('resize'),

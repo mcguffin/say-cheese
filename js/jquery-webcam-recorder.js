@@ -99,9 +99,11 @@
 						!!navigator.mediaDevices.getUserMedia,
 			
 			create : function() {
-				var $self = this;
-				var id = "html5-webcam-recorder-"+window.guid();
-				var html = '<video class="webcam-recorder" width="'+$self.options.width+'" height="'+$self.options.height+'" id="'+id+'" autoplay="autoplay"></video>';
+
+				var $self = this,
+					id = "html5-webcam-recorder-"+window.guid(),
+					whstring =  ( !! $self.options.height && !! $self.options.width ) ? 'width="'+$self.options.width+'" height="'+$self.options.height+'"' : '',
+					html = '<video class="webcam-recorder" ' + whstring + ' id="'+id+'" autoplay="autoplay"></video>';
 				
 				this.trigger( $.Event('recorder:create') , $(html).get(0) );
 				setTimeout(function(){$self.trigger(  $.Event('recorder:state:ready') , $self.element , 'ready' );},20);
