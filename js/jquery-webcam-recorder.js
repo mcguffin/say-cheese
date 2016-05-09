@@ -83,7 +83,7 @@
 	- recorder:state:started
 	- recorder:state:error
 	- recorder:state:stopped
-	
+
 	function callback( event , recorderElement [, state] ){
 	}
 	*/
