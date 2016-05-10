@@ -1,0 +1,3 @@
+[submodule "src/adapter"]
+	path = src/adapter
+	url = git@github.com:webrtc/adapter.git
