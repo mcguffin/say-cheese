@@ -43,8 +43,8 @@ Webcam Support
 
 | Browser  | Support   |
 |----------|-----------|
-| Firefox  |   HTML5   |
-| Chrome   |   HTML5   |
+| Firefox  |   WebRTC  |
+| Chrome   |   WebRTC  |
 | Safari   |   Flash   |
 | Opera    |     ?     |
 | IE       |   Flash   |
