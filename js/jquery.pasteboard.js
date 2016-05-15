@@ -35,8 +35,6 @@
 			this.on('paste' , function( event ) {
 					var clipboardData = event.clipboardData || event.originalEvent.clipboardData, 
 						$trgt = $(event.target), wait, pasted, waiting = false;
-					
-					
 
 					wait = function(event){
 						
@@ -88,7 +86,7 @@
 						- pasting files from finder result in type=text/plain; data=[filename]
 					
 					*/
-					if ( clipboardData.types.length ) {
+					if ( !!clipboardData && !!clipboardData.types && clipboardData.types.length ) {
 						$.each(clipboardData.types,function(i,type){
 							var $img, dataSrc;
 							if ( type == 'Files' && clipboardData.items) { // chrome

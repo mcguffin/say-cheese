@@ -6,10 +6,10 @@
 		is_safari = !is_chrome && navigator.userAgent.indexOf("Safari") > -1;
 
 	l10n = _.extend(l10n,cheese_l10n);
-
 	var cheese = {
 		supports : {
-			paste: ! is_safari && cheese_l10n.enable_pasteboard && (('paste' in document) || ('onpaste' in document) || typeof(window.onpaste) === 'object'),
+			paste: ! is_safari && cheese_l10n.enable_pasteboard && // enabled
+					( ('paste' in document) || ('onpaste' in document) || typeof(window.onpaste) === 'object' || ( 'onpaste' in document.createElement('DIV') ) ), // browser
 			webcam_recording: cheese_l10n.enable_snapshot && $.recorder.supported && ( ! is_chrome || ( is_chrome && location.protocol === 'https:') ),//!!(navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia)
 		},
 		view:{},

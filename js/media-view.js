@@ -132,7 +132,7 @@
 
 			this.image = new o.Image();
 			this.image.onload = function() {
-				var opts = self.controller.uploader.uploader.uploader.getOption('resize'),
+				var opts = self.getUploader().getOption('resize'),
 					scale = Math.max( opts.width / this.width, opts.height / this.height );
 				!!opts && (scale < 1) && this.downsize( this.width*scale, this.height*scale );
 				this.embed( container );
@@ -203,7 +203,6 @@
 		},
 		getUploader: function() {
 			return this.controller.uploader.uploader.uploader;
-			return 'function' === typeof this.uploader ? this.uploader() : this.uploader;
 		}
 	});
 	
