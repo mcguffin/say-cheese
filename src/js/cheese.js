@@ -78,7 +78,6 @@
 			content.startGrabbing();
 		},
 		uploadedDataImage: function( content ) {
-			console.log('uploaded!');
 			this.stopListening( this.currentCheeseView.uploader, 'action:uploaded:dataimage' );
 			var obj = { view: null };
 			this.browseContent(obj);

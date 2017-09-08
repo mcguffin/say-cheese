@@ -12,8 +12,9 @@ Browser Support
 
 ### Snapshot Support
 
- - Chrome 32+ (requires https connection)
- - Firefox 26+
+ - Chrome 32+ (WebRTC, requires https connection)
+ - Firefox 26+ (WebRTC)
+ - Microsoft Edge 13+ (ORTC)
 
 ### Clipboard pasting Support
 
@@ -24,9 +25,11 @@ Browser Support
  - Edge
 
 
-
 Clipboard Pasting Caveats:
 --------------------------
+
+### Webcam Recording through WebRTC is not supported in Safari yet.  
+However, support is planned for the next major releases of both browsers.
 
 ### Mac OS 10.11+:
 

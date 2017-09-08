@@ -4,15 +4,7 @@
 		Modal  = wp.media.view.Modal,
 		l10n   = cheese_options.l10n;
 
-// 	_.extend( wp.media.view.MediaFrame.prototype, {
-// 		_parentInitialize: wp.media.view.MediaFrame.prototype.initialize,
-// 		initialize: function() {
-// 			mediaFrame = this;
-// 			console.log("setMediaFrame");
-// 			this._parentInitialize.apply(this,arguments);
-// 		}
-// 	} );
-	
+
 	wp.media.cheese.view.NameInput = wp.media.View.extend({
 		tagName:   'label',
 		className: 'setting',
@@ -37,8 +29,8 @@
 			return v || this.options.defaultValue;
 		}
 	});
-	
-	
+
+
 	wp.media.cheese.view.ActionButton = Button.extend({
 		dashicon : 'yes',
 		render : function(){
@@ -287,7 +279,6 @@
 			return this;
 		},
 		stop : function(){
-console.trace('views.Recorder stop');
 			this._webcam.stop();
 			if ( this._recorder.is(':visible') )
 				this._recorder.hide();
