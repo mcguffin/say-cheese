@@ -243,10 +243,7 @@
 							minWidth: 640,
 							minHeight: 480
 						}},
-						microphone:false,
-						flash : {
-							swf_url : l10n.swf_url
-						}
+						microphone:false
 					};
 				this._webcam = $(this._recorder).recorder(recorderOptions);
 			
@@ -272,7 +269,7 @@
 					self._instruments.hide();
 				});
 			}
-			
+
 			this._instruments.hide();
 		},
 		get_state : function() {

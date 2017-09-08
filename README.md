@@ -119,7 +119,7 @@ ToDo:
 		- [ ] Win
 		- [ ] Linux
  - [ ] Add Messages after upload Error
- - [ ] Deprecate Flash fallback
+ - [x] Deprecate Flash fallback
 
 Support
 -------

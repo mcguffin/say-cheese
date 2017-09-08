@@ -74,7 +74,6 @@ class SayCheeseAdmin {
 				'please_allow_camera_message' 	=> __( 'Please allow camera access in your browser.' , 'say-cheese' ),
 				'an_error_occured'				=> __( 'An error occured.' , 'say-cheese' ),
 			),
-			'swf_url' 						=> plugins_url( 'js/WebcamRecorder.swf' , dirname( __FILE__ ) ),
 			'enable_snapshot' 				=> get_option( 'saycheese_enable_snapshot' , is_ssl() ),
 			'enable_pasteboard' 			=> get_option( 'saycheese_enable_pasteboard' , true ),
 		) );

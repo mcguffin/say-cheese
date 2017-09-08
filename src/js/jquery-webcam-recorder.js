@@ -11,7 +11,7 @@
 		}});
 	}
 	
-	var stream = null, s,minFlashVersion = "11.2.0", 
+	var stream = null, s, 
 		counter=0;
 
 	exports.guid = function() {
@@ -47,14 +47,10 @@
 				video: { width: 1280, height: 720 },
 				audio: false
 			},
-			flash : {
-				swf_url : 'WebcamRecorder.swf'
-			},
 			html5 : {},
 			autostart:false
 		},options);
-		
-		
+
 		this.on('recorder:create',function( e , element ){
 			// e.ref -> html element ... objct, embed, video, ...
 			// append to self.append
@@ -176,67 +172,6 @@
 					return dataSrc;
 				}
 			}
-		},
-		flash : {
-			supported : swfobject && swfobject.hasFlashPlayerVersion(minFlashVersion),
-
-			id : null,
-			create : function(){
-				var $self = this,
-					$detached = null,el;
-				
-				this.id = "flash-webcam-recorder-"+window.guid()
-				
-				window.statechange = function(arg) {
-					$self.state = arg;
-					$self.trigger( $.Event('recorder:state:'+arg) , $self.element );
-				}
-				
-				var $elem = $('<div><div id="'+this.id+'" /></div>');
-				$self.trigger( $.Event('recorder:create') , $elem );
-				
-				// we need to wait until the palceholder div get attached to the DOM before we can embedSWF() it.
-				var create_swf_interval = setInterval(function() {
-					if ( $('#'+$self.id).inDOM() ) {
-						var width = 640, height = 480,
-							xiURL=false,
-							flashvars = {},
-							param = {
-								'allowscriptaccess'	: 'always',
-								'wmode'				: 'opaque',
-							},
-							attr = {},
-							callback = function(e) {
-								if ( e.success ) {
-									$self.element = e.ref;
-								}
-							};
-						swfobject.embedSWF( $self.options.flash.swf_url , $self.id , width , height , minFlashVersion , xiURL , flashvars , param , attr , callback );
-						clearInterval(create_swf_interval);
-					}
-				},100);
-			},
-			start : function() {
-				var self = this;
-				if ( this.state == 'ready' || this.state == 'error' || this.state == 'permissionerror' ) {
-					ret = this.element.startcam( );
-					return ret;
-				} else {
-					this.one('recorder:state:ready',function(e){ 
-						e.stopPropagation();
-						self.start(); 
-					});
-				}
-			},
-			stop : function() {
-				try {
-					return this.element.stopcam( );
-				} catch(err){}
-			},
-			snapshot : function(){
-				return file_data_from_datasrc( this.element.snapshot() );
-			}
-			
 		}
 	}
 	for (s in recorder_modules) {
