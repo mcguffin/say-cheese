@@ -25,8 +25,13 @@ class Admin extends Core\Singleton {
 	 */
 	function admin_init() {
 		$version = SAY_CHEESE_VERSION;
+		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
+			$script_source = 'js/cheese-with-sourcemap.min.js';
+		} else {
+			$script_source = 'js/cheese.min.js';
+		}
 		wp_register_script( 'cheese-base', 
-			plugins_url( 'js/cheese.min.js' , SAY_CHEESE_FILE ), 
+			plugins_url( $script_source , SAY_CHEESE_FILE ), 
 			array( 'jquery', 'swfobject', 'media-editor' ), 
 			$version
 		);

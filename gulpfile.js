@@ -38,11 +38,10 @@ gulp.task('scripts-admin', function() {
 			.pipe(sourcemaps.init())
 			.pipe( uglify().on('error', gulputil.log ) )
 			.pipe( concat('cheese.min.js') )
+			.pipe( gulp.dest( './js/' ) )
+			.pipe( rename('cheese-with-sourcemap.min.js') )
 			.pipe( sourcemaps.write() )
 			.pipe( gulp.dest( './js/' ) ),
-
-		gulp.src( vendor_scripts )
-			.pipe( gulp.dest( './js/vendor/' ) ),
     ]; 	
 });
 
