@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Say Cheese v0.0.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-05-26 13:46+0100\n"
-"PO-Revision-Date: 2015-05-26 13:49+0100\n"
+"POT-Creation-Date: 2017-09-08 16:28+0100\n"
+"PO-Revision-Date: 2017-09-08 16:30+0100\n"
 "Last-Translator: Jörn Lund <joern@podpirate.org>\n"
 "Language-Team: \n"
 "Language: de_DE\n"
@@ -11,87 +11,119 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 1.8\n"
-"X-Poedit-SourceCharset: utf-8\n"
-"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;"
-"_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;esc_attr__;esc_attr_e;esc_attr_x:1,2c;"
-"esc_html__;esc_html_e;esc_html_x:1,2c\n"
+"X-Generator: Poedit 1.8.1\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
+"_n_noop:1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c\n"
 "X-Poedit-Basepath: ../\n"
 "X-Textdomain-Support: yes\n"
 "X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: node_modules\n"
 
 # @ cheese
-#: say-cheese.php:20
+#: include/SayCheese/Admin/Admin.php:46
 msgid "Webcam Record"
 msgstr "Webcam Schnappschuss"
 
 # @ cheese
-#: say-cheese.php:21
-msgid "Try again"
-msgstr "Nochmal"
-
-# @ cheese
-#: say-cheese.php:22
-msgid "Upload"
-msgstr "Upload"
-
-# @ cheese
-#: say-cheese.php:23
-msgid "Record"
-msgstr "Aufnahme"
-
-# @ default
-#: say-cheese.php:24
-msgid "Title"
-msgstr ""
-
-# @ cheese
-#: say-cheese.php:25
+#: include/SayCheese/Admin/Admin.php:47
+#: include/SayCheese/Settings/SettingsMedia.php:55
 msgid "Snapshot"
 msgstr "Schnappschuss"
 
 # @ cheese
-#: say-cheese.php:26
+#: include/SayCheese/Admin/Admin.php:48
 msgid "Take Snapshot"
 msgstr "Schnappschuss"
 
-#: say-cheese.php:27
+#: include/SayCheese/Admin/Admin.php:49
 msgid "Copy & Paste"
 msgstr "Kopieren & Einfügen"
 
-#: say-cheese.php:28
+#: include/SayCheese/Admin/Admin.php:50
 msgid "Pasted"
 msgstr "Eingefügt"
 
-# @ cheese
-#: say-cheese.php:29
-msgid "Paste from Clipboard"
-msgstr "Aus der Zwischenablage"
-
 # @ default
-#: say-cheese.php:30
+#: include/SayCheese/Admin/Admin.php:51
 msgid "Image"
 msgstr "Bild"
 
 # @ cheese
-#: say-cheese.php:31
-msgid "Paste some image Data from your clipboard"
-msgstr "Fügen Sie Bilddaten aus der Zwischenablage ein."
-
-# @ cheese
-#: say-cheese.php:32
+#: include/SayCheese/Admin/Admin.php:52
 msgid "No image data pasted."
 msgstr "Keine Bilddaten in der Zwischenablage."
 
-# @ cheese
-#: say-cheese.php:33
-msgid "Your Browser does not support pasting processable image data."
-msgstr "Ihr Browser kann hier leider keine brauchbaren Bilddaten einfügen."
+#: include/SayCheese/Admin/Admin.php:53
+msgid "Error pasting image data."
+msgstr "Fehler beim Einfügen"
 
-#: say-cheese.php:34
+#: include/SayCheese/Settings/SettingsMedia.php:34
+msgid "Say Cheese"
+msgstr ""
+
+#: include/SayCheese/Settings/SettingsMedia.php:40
+msgid "Pasteboard"
+msgstr "Pasteboard"
+
+#: include/SayCheese/Settings/SettingsMedia.php:46
+msgid "Enable Copy-Paste image uploads."
+msgstr "Copy-Paste Bilduploads aktivieren"
+
+#: include/SayCheese/Settings/SettingsMedia.php:61
+msgid "Enable Webcam image uploads."
+msgstr "Webcam-Bildupload aktivieren."
+
+#: include/SayCheese/Settings/SettingsMedia.php:62
+msgid ""
+"In some Browsers – e.g. Chrome – this will not work with non-HTTPS "
+"connections."
+msgstr ""
+"In einigen Browsern, z.B. Chrome, wird das nicht ohne HTTPS-Verbindung "
+"funktionieren."
+
+# @ cheese
+#: include/template/pasteboard.php:9
+msgid "Paste some image Data from your clipboard"
+msgstr "Fügen Sie Bilddaten aus der Zwischenablage ein."
+
+#: include/template/pasteboard.php:11
+msgid "Click here please..."
+msgstr "Bitte hier klicken..."
+
+# @ cheese
+#: include/template/recorder.php:12
+msgid "Record"
+msgstr "Aufnahme"
+
+#: include/template/recorder.php:16
+msgid "An error occured."
+msgstr "Ein Fehler ist aufgetreten."
+
+#: include/template/recorder.php:17
 msgid "Please allow camera access in your browser."
 msgstr "Bitte erlauben Deinem Browser den Zugriff auf die Kamera!"
 
-#: say-cheese.php:35
-msgid "An error occured."
-msgstr "Ein Fehler ist aufgetreten."
+# @ cheese
+#: include/template/recorder.php:19 include/template/uploader.php:12
+msgid "Try again"
+msgstr "Nochmal"
+
+# @ default
+#: include/template/uploader.php:15
+msgid "Title"
+msgstr ""
+
+# @ cheese
+#: include/template/uploader.php:20
+msgid "Upload"
+msgstr "Upload"
+
+# @ cheese
+#~ msgid "Paste from Clipboard"
+#~ msgstr "Aus der Zwischenablage"
+
+# @ cheese
+#~ msgid "Your Browser does not support pasting processable image data."
+#~ msgstr "Ihr Browser kann hier leider keine brauchbaren Bilddaten einfügen."

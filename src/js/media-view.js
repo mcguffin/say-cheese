@@ -15,7 +15,6 @@
 		
 		uploader : null,
 		
-		_model : {},
 		events : {
 			'click [data-action="upload"]'	: 'uploadImage',
 			'click [data-action="discard"]'	: 'discardImage',
@@ -71,9 +70,9 @@
 			this.unbindUploaderEvents();
 		},
 		uploadImage : function() {
-//			
+
 			var type = 'image/png',
-				name = this.nameInput.val() + '.png',
+				name = this.$('input[data-setting="title"]').val() + '.png',
 				blob = this.image.getAsBlob( type );
 
 			this.bindUploaderEvents();
