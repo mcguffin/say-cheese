@@ -3,15 +3,11 @@
 	var counter      = 0,
 		l10n = wp.media.view.l10n = typeof _wpMediaViewsL10n === 'undefined' ? {} : _wpMediaViewsL10n,
 		is_chrome = navigator.userAgent.indexOf('Chrome') > -1;
-		is_safari = !is_chrome && navigator.userAgent.indexOf("Safari") > -1;
-
 
 	$.extend( wp.Uploader.prototype, {
 		success : function( file_attachment ){
 		}
 	});
-
-
 
 
 	/**

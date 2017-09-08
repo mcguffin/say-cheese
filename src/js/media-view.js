@@ -2,10 +2,8 @@
 	var cheese = window.cheese,
 		Button = wp.media.view.Button,
 		Modal  = wp.media.view.Modal,
-		l10n   = wp.media.view.l10n = typeof _wpMediaViewsL10n === 'undefined' ? {} : _wpMediaViewsL10n;
+		l10n   = cheese_options.l10n;
 
-	l10n = _.extend(l10n,cheese_l10n);
-	
 // 	_.extend( wp.media.view.MediaFrame.prototype, {
 // 		_parentInitialize: wp.media.view.MediaFrame.prototype.initialize,
 // 		initialize: function() {
@@ -322,29 +320,36 @@
 			
 			this._content = $('<div class="pasteboard-inline-content"><h3>' + l10n.paste_instructions + '</h3></div>')
 				.appendTo(this.$el);
-			this._pasteboard = $( '<div id="pasteboard-injector"></div>' )
+			this._pasteboard = $( '<div id="pasteboard-injector" contenteditable></div>' )
 				.appendTo( this._content );	
-			
+			this._pasteboard.pastableContenteditable();
 		},
 		start : function(){
 			var self = this;
+			
 			this._pasteboard
-				.imagepastebox({
-					messages : {
-						no_image_pasted : l10n.paste_error_no_image,
-						no_processible_image_pasted : l10n.paste_error_webkit_fake_image,
-					}
-				})
-				.on('pasteimage' , function( e , data ) {
+// 				.imagepastebox({
+// 					messages : {
+// 						no_image_pasted : l10n.paste_error_no_image,
+// 						no_processible_image_pasted : l10n.paste_error_webkit_fake_image,
+// 					}
+// 				})
+				.on('pasteImage' , function( e, data ) {
 					self._onPaste( data );
 				} )
+				.on('pasteImageError' , function( e, data ) {
+					self.show_message( l10n.paste_error );
+				} )
+				.on('pasteText' , function( e, data ) {
+					self.show_message( l10n.paste_error_no_image );
+				} )
 				.focus();
-			this.listenTo( this.pasteboard, 'pasteimage' , this._onPaste );
+//			this.listenTo( this.pasteboard, 'pasteimage' , this._onPaste );
 			return this;
 		},
 		stop : function(){
 			this._pasteboard
-				.imagepastebox('off')
+//				.imagepastebox('off')
 				.off('pasteimage');
 			return this;
 		},
@@ -357,7 +362,10 @@
 			return this;
 		},
 		_onPaste : function( data ) {
-			this.trigger( 'action:create:dataimage', this , data );
+			this.trigger( 'action:create:dataimage', this , data.dataURL );
+		},
+		show_message:function( msg ) {
+			this._pasteboard.text( msg );
 		}
 	});
 

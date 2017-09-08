@@ -1,0 +1,167 @@
+/*
+// record: \F235
+// okay: \F147
+// reset: \F158
+
+recorder:
+
+.recorder {
+	.webcam-recorder {
+	}
+	.instruments {
+		.recorder-record {
+		}
+	}
+}
+
+
+*/
+#pasteboard-injector {
+	width:100px;
+	height:100px;
+	margin:0 auto;
+	background:rgba(0,0,0,0.2);
+}
+.wp-core-ui {
+
+	.grabber-button {
+		margin:10px 10px 10px 0;
+	
+	}
+
+	.button {
+		&.button-action {
+			height:auto;
+			padding-top:0.3em;
+			text-align:center;
+			display:inline-block;
+		}
+	}
+	.instruments {
+		background:rgba(255,255,255,0.8);
+		border:1px solid rgba(230,230,230,0.8);
+		border-radius:3px;
+		position:absolute;
+		right:1em;
+		bottom:1em;
+		padding:1.5em;
+
+		.button-action {
+			float:left;
+		}
+		.dashicons {
+			display:block;
+			font-size:3em;
+			text-align:center;
+			width:auto;
+			line-height:0.75em;
+		}
+		.setting {
+			float:left;
+			text-align:left;
+			display:block;
+			width:400px;
+			margin:0 1em;
+			padding:0.2em;
+		}
+		.setting {
+			input {
+				box-sizing:border-box;
+				width:100%;
+			}
+			span {
+				display:block;
+			}
+		}
+	}
+	.recorder .instruments {
+		background:transparent;
+		border-style:none;
+	}
+}
+
+
+.data-source-image .instruments {
+}
+
+
+div.webcam-recorder {
+	height:100%;
+}
+
+.recorder,
+.data-source-image {
+	margin:0 auto;
+	max-height:100%;
+}
+.recorder {
+	video, object  {
+		max-height:100%;
+		display:block;
+		margin:0 auto;
+	}
+}
+
+.data-source-image {
+	margin:0 auto;
+	text-align: center;
+	canvas {
+		max-width:100%;
+	}
+}
+
+.webcam-recorder .data-source-image,
+.recorder {
+	max-width:100%;
+}
+
+#pasteboard-injector {
+	text-align:center;
+	color:#aa0000;
+	font-style:italic;
+}
+
+.image-grabber {
+	height: 100%;
+	padding-top: 50px;
+	box-sizing: border-box;
+	overflow:auto;
+
+	.media-frame-title {
+		left:0;
+	}
+	.image-grabber-content {
+		height: 100%;
+		box-shadow: 0px 4px 4px -4px rgba(0, 0, 0, 0.1) inset;
+		background: none repeat scroll 0% 0% rgb(240, 240, 240);
+		box-sizing: border-box;
+		overflow:auto;
+		padding:1em 0;
+	}
+}
+
+.media-frame-content .image-grabber {
+	padding-top: 0;
+	.media-frame-title {
+		display: none;
+	}
+}
+
+
+.recorder-inline-content,
+.pasteboard-inline-content {
+    position: absolute;
+    top: 30%;
+    left: 0px;
+    right: 0px;
+	h3 {
+		font-size: 20px;
+		line-height: 28px;
+		font-weight: 400;
+		margin-bottom: 1.6em;
+		text-align:center;
+	}
+}
+.recorder-inline-content {
+	text-align:center;
+}
