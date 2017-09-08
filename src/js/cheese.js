@@ -159,7 +159,6 @@
 			}
 		},
 		cheeseUploaded: function( e ) {
-			console.log( 'uploaded', e );
 			this.cheese.active.grabber.dismiss();
 			this.cheese.modal.close();
 			this.cheeseClose();
@@ -168,6 +167,8 @@
 			console.log( 'error', e );
 		},
 		cheeseOpen: function( title ) {
+			var self = this;
+
 			this.cheese.modal  =  new wp.media.view.Modal( {
 				controller : this,
 				title      : title
@@ -175,7 +176,10 @@
 			this.cheese.modal.content( this.cheese.active.grabber );
 			this.cheese.modal.open();
 
-			this.cheese.modal.on( 'close', this.cheeseClose, this );
+			this.cheese.modal.on( 'close', function() {
+				self.cheeseClose.apply(self);
+				self.cheese.active.grabber.stopGrabbing();
+			});
 
 			this.cheese.active.grabber.startGrabbing();
 

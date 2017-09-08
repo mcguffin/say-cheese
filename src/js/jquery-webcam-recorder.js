@@ -139,6 +139,7 @@
 			},
 			stop : function(){
 				var tracks, s;
+console.trace('stop recorder');
 				if ( !! stream ) {
 					if ( !! stream.stop ) {
 						stream.stop();

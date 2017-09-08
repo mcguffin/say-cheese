@@ -287,6 +287,7 @@
 			return this;
 		},
 		stop : function(){
+console.trace('views.Recorder stop');
 			this._webcam.stop();
 			if ( this._recorder.is(':visible') )
 				this._recorder.hide();
@@ -377,7 +378,6 @@
 
 			_.defaults( this.options, {
 				wpuploader	: null,
-//				grabber : wp.media.cheese.view.WebcamRecorder
 			});
 
 			var defaultFileName = (this.options.grabber == wp.media.cheese.view.WebcamRecorder) 
@@ -386,22 +386,22 @@
 							? l10n.pasted 
 							: l10n.image 
 						),
-				title 		= (this.options.grabber == wp.media.cheese.view.WebcamRecorder) 
+				title = (this.options.grabber == wp.media.cheese.view.WebcamRecorder) 
 								? l10n.take_snapshot 
 								: ((this.options.grabber == wp.media.cheese.view.Pasteboard) 
 									? l10n.copy_paste 
 									: l10n.image 
 								),
-				wrap		= new wp.media.View({
+				wrap = new wp.media.View({
 					className : 'image-grabber-content',
 					tagName : 'div',
 					controller:this.controller
 				}), 
-				titleDiv	= new wp.media.View({
+				titleDiv = new wp.media.View({
 					className : 'media-frame-title',
 					tagName : 'div'
 				}),
-				titleH1		= new wp.media.View({
+				titleH1 = new wp.media.View({
 					tagName : 'h1'
 				});
 
@@ -430,6 +430,10 @@
 		startGrabbing:function() {
 			this.uploader.hide();
 			this.grabber.show().start();
+			return this;
+		},
+		stopGrabbing:function() {
+			this.grabber.stop();
 			return this;
 		},
 		getAction : function() {
