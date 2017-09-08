@@ -41,7 +41,7 @@ class Admin extends Core\Singleton {
 			array( 'jquery', 'swfobject', 'media-editor' ), 
 			$version
 		);
-		wp_localize_script( 'cheese-base' , 'cheese_options' , array(
+		wp_localize_script( 'cheese-base' , 'cheese' , array(
 			'l10n' => array(
 				'webcam_record' 				=> __('Webcam Record' , 'say-cheese' ),
 				'snapshot' 						=> __('Snapshot','say-cheese'),
@@ -52,8 +52,10 @@ class Admin extends Core\Singleton {
 				'paste_error_no_image' 			=> __('No image data pasted.','say-cheese'),
 				'paste_error'					=> __('Error pasting image data.','say-cheese'),
 			),
-			'enable_snapshot' 				=> get_option( 'saycheese_enable_snapshot' , is_ssl() ),
-			'enable_pasteboard' 			=> get_option( 'saycheese_enable_pasteboard' , true ),
+			'options' => array(
+				'enable_snapshot' 				=> get_option( 'saycheese_enable_snapshot' , is_ssl() ),
+				'enable_pasteboard' 			=> get_option( 'saycheese_enable_pasteboard' , true ),
+			),
 		) );
 
 		wp_register_style( 'cheese' , plugins_url( 'css/cheese.css' , SAY_CHEESE_FILE ) , array( ) , $version );

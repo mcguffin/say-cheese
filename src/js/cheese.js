@@ -1,7 +1,7 @@
 (function($,exports){
 
 	var counter      = 0,
-		l10n = wp.media.view.l10n = typeof _wpMediaViewsL10n === 'undefined' ? {} : _wpMediaViewsL10n,
+		l10n = wp.media.cheese.l10n,
 		is_chrome = navigator.userAgent.indexOf('Chrome') > -1;
 
 	$.extend( wp.Uploader.prototype, {

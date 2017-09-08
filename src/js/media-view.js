@@ -1,8 +1,8 @@
 (function($,window,o){
-	var cheese = window.cheese,
+	var cheese = wp.media.cheese,
 		Button = wp.media.view.Button,
 		Modal  = wp.media.view.Modal,
-		l10n   = cheese_options.l10n;
+		l10n   = cheese.l10n;
 
 
 	wp.media.cheese.view.DataSourceImageUploader = wp.media.View.extend({
@@ -216,8 +216,12 @@
 				.on('pasteText' , function( e, data ) {
 					self.show_message( l10n.paste_error_no_image );
 					$( this ).html('');
-				} )
-				.focus();
+				} );
+
+			setTimeout(function(){
+				self.$pasteboard.get(0).focus();
+			},1);
+
 			return this;
 		},
 		stop : function(){

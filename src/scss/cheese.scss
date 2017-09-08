@@ -13,6 +13,11 @@
 
 	.media-frame-title {
 		left:0;
+		border-bottom:1px solid #ddd;
+		background:#fff;
+		.media-frame & {
+			display:none;
+		}
 	}
 	.image-grabber-content {
 		height: 100%;
