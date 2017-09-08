@@ -3,33 +3,25 @@
 // okay: \F147
 // reset: \F158
 
-recorder:
-
-.recorder {
-	.webcam-recorder {
-	}
-	.instruments {
-		.recorder-record {
-		}
-	}
-}
-
-
 */
-.wp-core-ui {
 
-	.grabber-button {
-		margin:10px 10px 10px 0;
-	
+.cheese-grabber {
+	height: 100%;
+	padding-top: 50px;
+	box-sizing: border-box;
+	overflow:auto;
+
+	.media-frame-title {
+		left:0;
 	}
-
-	.button {
-		&.button-action {
-			height:auto;
-			padding-top:0.3em;
-			text-align:center;
-			display:inline-block;
-		}
+	.image-grabber-content {
+		height: 100%;
+		box-shadow: 0px 4px 4px -4px rgba(0, 0, 0, 0.1) inset;
+		background: none repeat scroll 0% 0% rgb(240, 240, 240);
+		box-sizing: border-box;
+		overflow:auto;
+		padding:1em 0;
+		position:relative;
 	}
 	.instruments {
 		background:rgba(255,255,255,0.8);
@@ -39,16 +31,114 @@ recorder:
 		right:1em;
 		bottom:1em;
 		padding:1.5em;
-
-		.button-action {
-			float:left;
+	}
+	.button-action {
+		&,
+		.wp-core-ui &.button.button-large {
+			height:auto;
 		}
+		padding-top:0.3em;
+		text-align:center;
+		display:inline-block;
 		.dashicons {
 			display:block;
 			font-size:3em;
 			text-align:center;
 			width:auto;
 			line-height:0.75em;
+		}
+	}
+}
+
+.cheese-pasteboard {
+	.injector {
+		text-align:center;
+		color:rgba(0,0,0,0);
+		font-style:italic;
+		position:absolute;
+		left:0;
+		top:0;
+		bottom:0;
+		right:0;
+		& ~ .instructions,
+		& ~ .message {
+			display:none;
+		}
+		&:focus {
+	//		background:#f00;
+			& ~ .instructions,
+			& ~ .message {
+				display:block;
+			}
+			& ~ .click-here {
+				display:none;
+			}
+		}
+	}
+	.instructions,
+	.message,
+	.click-here {
+		position:absolute;
+		left:0;
+		right:0;
+		font-size: 20px;
+		line-height: 28px;
+		font-weight: 400;
+		margin-bottom: 0.5em;
+		text-align:center;		
+	}
+	.instructions {
+		bottom:55%;
+	}
+	.message {
+		top:45%;
+		color:#aa0000;
+	}
+	.click-here {
+		bottom:55%;
+	}
+}
+
+.cheese-recorder {
+	video, object  {
+		max-height:100%;
+		display:block;
+		margin:0 auto;
+	}
+	.instruments,
+	.error,
+	.camera-access-note {
+		display:none;
+	}
+	[data-state="error"],
+	[data-state="permissionerror"] {
+		& ~ .error {
+			display:block;
+		}
+	}
+	[data-state="permissionerror"] {
+		& ~ .error {
+			.camera-access-note {
+				display:block;
+			}
+		}
+	}
+	[data-state="started"] {
+		& ~ .instruments {
+			display:block;
+		}
+	}
+}
+
+
+.cheese-uploader {
+	.image-container {
+		margin:0 auto;
+		text-align: center;
+	}
+	.instruments {
+		.button-action {
+			float:left;
 		}
 		.setting {
 			float:left;
@@ -68,128 +158,92 @@ recorder:
 			}
 		}
 	}
-	.recorder .instruments {
-		background:transparent;
-		border-style:none;
+}
+
+// media lib buttons
+.media-toolbar-secondary {
+	& > .grabber-button {
+		margin:10px 10px 10px 0;
 	}
 }
 
-div.webcam-recorder {
-	height:100%;
-}
-
-.recorder,
-.data-source-image {
-	margin:0 auto;
-	max-height:100%;
-}
-.recorder {
-	video, object  {
-		max-height:100%;
-		display:block;
-		margin:0 auto;
-	}
-}
-
-.data-source-image {
-	margin:0 auto;
-	text-align: center;
-	canvas {
-		max-width:100%;
-	}
-}
-
-.webcam-recorder .data-source-image,
-.recorder {
-	max-width:100%;
-}
-
-#pasteboard-injector {
-	text-align:center;
-	color:rgba(0,0,0,0);
-	font-style:italic;
-	position:absolute;
-	left:0;
-	top:0;
-	bottom:0;
-	right:0;
-	& ~ .pasteboard-status {
-		display:none;
-	}
-	&:focus {
-//		background:#f00;
-		& ~ .pasteboard-status {
-			display:block;
-		}
-		& ~ .pasteboard-click-here {
-			display:none;
-		}
-	}
-}
-
-.image-grabber {
-	height: 100%;
-	padding-top: 50px;
-	box-sizing: border-box;
-	overflow:auto;
-
-	.media-frame-title {
-		left:0;
-	}
-	.image-grabber-content {
-		height: 100%;
-		box-shadow: 0px 4px 4px -4px rgba(0, 0, 0, 0.1) inset;
-		background: none repeat scroll 0% 0% rgb(240, 240, 240);
-		box-sizing: border-box;
-		overflow:auto;
-		padding:1em 0;
-		position:relative;
-	}
-}
-
-.media-frame-content .image-grabber {
-	padding-top: 0;
-	.media-frame-title {
-		display: none;
-	}
-}
-
-.pasteboard-click-here,
-.pasteboard-status {
-    position: absolute;
-    bottom: 55%;
-    left: 0px;
-    right: 0px;
-	text-align:center;
-	pointer-events:none;
-	& > * {
-		position:static;
-		font-size: 20px;
-		line-height: 28px;
-		font-weight: 400;
-	}
-	& > .message {
-		color:#aa0000;
-	}
-}
-
-.recorder-inline-content,
-.pasteboard-inline-content {
-    position: absolute;
-    top: 30%;
-    left: 0px;
-    right: 0px;
-	h3 {
-		font-size: 20px;
-		line-height: 28px;
-		font-weight: 400;
-		margin-bottom: 1.6em;
-		text-align:center;
-	}
-	&:focus {
-		outline:box-shadow 0 0 10px 
-	}
-}
-.recorder-inline-content {
-	text-align:center;
-}
+// .wp-core-ui {
+// 
+// 
+// 	.recorder .instruments {
+// 		background:transparent;
+// 		border-style:none;
+// 	}
+// }
+// 
+// div.webcam-recorder {
+// 	height:100%;
+// }
+// 
+// .recorder,
+// .data-source-image {
+// 	margin:0 auto;
+// 	max-height:100%;
+// }
+// .recorder {
+// }
+// 
+// .data-source-image {
+// 	canvas {
+// 		max-width:100%;
+// 	}
+// }
+// 
+// .webcam-recorder .data-source-image,
+// .recorder {
+// 	max-width:100%;
+// }
+// 
+// #pasteboard-injector {
+// 
+// }
+// 
+// .image-grabber {
+// 	height: 100%;
+// 	padding-top: 50px;
+// 	box-sizing: border-box;
+// 	overflow:auto;
+// 
+// 	.media-frame-title {
+// 		left:0;
+// 	}
+// 	.image-grabber-content {
+// 		height: 100%;
+// 		box-shadow: 0px 4px 4px -4px rgba(0, 0, 0, 0.1) inset;
+// 		background: none repeat scroll 0% 0% rgb(240, 240, 240);
+// 		box-sizing: border-box;
+// 		overflow:auto;
+// 		padding:1em 0;
+// 		position:relative;
+// 	}
+// }
+// 
+// .media-frame-content .image-grabber {
+// 	padding-top: 0;
+// 	.media-frame-title {
+// 		display: none;
+// 	}
+// }
+// 
+// .recorder-inline-content {
+//     position: absolute;
+//     top: 30%;
+//     left: 0px;
+//     right: 0px;
+// 	h3 {
+// 		font-size: 20px;
+// 		line-height: 28px;
+// 		font-weight: 400;
+// 		margin-bottom: 1.6em;
+// 		text-align:center;
+// 	}
+// 	&:focus {
+// 		outline:box-shadow 0 0 10px 
+// 	}
+// 	text-align:center;
+// }

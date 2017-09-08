@@ -17,6 +17,7 @@ class Admin extends Core\Singleton {
 
 		add_action( 'admin_init' , array( $this, 'admin_init' ) );
 		add_action( 'wp_enqueue_media' , array( $this, 'wp_enqueue_media' ) );
+		add_action( 'print_media_templates',  array( $this, 'print_media_templates' ) );
 	}
 
 
@@ -75,5 +76,14 @@ class Admin extends Core\Singleton {
 		wp_enqueue_style( 'cheese' );
 	}
 
+	/**
+	 *	@action 'print_media_templates'
+	 */
+	function print_media_templates() {
+		$rp = SAY_CHEESE_DIRECTORY . 'include' . DIRECTORY_SEPARATOR . '/template/{,*/,*/*/,*/*/*/}*.php';
+		foreach ( glob( $rp, GLOB_BRACE ) as $template_file ) {	
+			include $template_file;
+		}
+	}
 }
 

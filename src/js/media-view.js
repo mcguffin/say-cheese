@@ -5,63 +5,21 @@
 		l10n   = cheese_options.l10n;
 
 
-	wp.media.cheese.view.NameInput = wp.media.View.extend({
-		tagName:   'label',
-		className: 'setting',
-		_input : null,
-		
-		initialize:function() {
-			_.defaults( this.options, {
-				defaultValue : 'untitled',
-				title:l10n.title,
-			});
-			this._input = $('<input class="alignment" type="text" data-setting="title" />');
-			this.$el
-				.append('<span>'+this.options.title+'</span>')
-				.append(this._input);
-		},
-		render : function() {
-			if ( ! this._input.val() )
-				this._input.val( this.options.defaultValue );
-		},
-		val : function(){
-			var v = this._input.val();
-			return v || this.options.defaultValue;
-		}
-	});
-
-
-	wp.media.cheese.view.ActionButton = Button.extend({
-		dashicon : 'yes',
-		render : function(){
-			_.defaults( this.options, {
-				dashicon : 'yes',
-			});
-			var ret = wp.media.view.Button.prototype.render.apply(this,arguments);
-			this.$el.addClass('button-action');
-			this.$el.prepend('<span class="dashicons dashicons-'+this.options.dashicon+'"></span>');
-			if ( this.model.disabled )
-				this.$el.addClass('disabled');
-			else
-				this.$el.removeClass('disabled');
-			return ret;
-		}
-	});
-	
-
 	wp.media.cheese.view.DataSourceImageUploader = wp.media.View.extend({
-		tagName:   'div',
-		className: 'data-source-image',
+		template: wp.template('cheese-uploader'),
+		className: 'cheese-uploader',
 		controller:null,
 		image : null,
-		discardBtn : null,
-		nameInput : null,
-		uploadBtn : null,
+		$discardBtn : null,
+		$uploadBtn : null,
 		
 		uploader : null,
 		
 		_model : {},
-
+		events : {
+			'click [data-action="upload"]'	: 'uploadImage',
+			'click [data-action="discard"]'	: 'discardImage',
+		},
 		initialize : function() {
 
 			wp.media.View.prototype.initialize.apply( this, arguments );
@@ -77,45 +35,9 @@
 			});
 
 			this.uploader = this.options.uploder;
-
-			this.discardBtn = new wp.media.cheese.view.ActionButton({
-				className : 'image-discard',
-				model: this.disabledModel,
-				controller:this.controller,
-				style:'secondary',
-				text : l10n.try_again,
-				dashicon : 'arrow-left',
-				click: function(){
-					self.discardImage.apply( self, arguments );
-				}
-			});
-			this.nameInput = new wp.media.cheese.view.NameInput({
-				defaultValue : this.options.defaultFileName
-			});
-			this.uploadBtn = new wp.media.cheese.view.ActionButton({
-				className : 'image-upload',
-				model: this.disabledModel,
-				controller:this.controller,
-				style:'primary',
-				text : l10n.upload,
-				click: function() {
-					self.uploadImage.apply( self, arguments ); 
-				}
-			});
-			
-			
-			this.views.add(instr);
-
-			instr.views.add( this.discardBtn );
-			instr.views.add( this.nameInput );
-			instr.views.add( this.uploadBtn );
-			
-			this.$imageContainer = false;
-
-		//	this.bindUploaderEvents();
 		},
 		setImageData : function( data ) {
-			var container = this.$el.find('.image-container').html('').get(0),
+			var container = this.$imageContainer.html('').get(0),
 				self = this;
 			if ( this.image ) 
 				this.image.destroy();
@@ -137,8 +59,12 @@
 			return this;
 		},
 		render : function() {
-			this.$imageContainer = $('<span class="image-container" />');
-			this.$el.prepend(this.$imageContainer);
+			wp.media.View.prototype.render.apply(this,arguments);
+			this.$imageContainer = this.$('.image-container');
+			this.$discardBtn = this.$('[data-action="discard"]');
+			this.$uploadBtn = this.$('[data-action="upload"]');
+			this.$('[data-setting="title"]').val( this.options.defaultFileName );
+			return this;
 		},
 		discardImage : function(){
 			this.trigger( 'action:discard:dataimage' , this );
@@ -170,8 +96,8 @@
 			return this;
 		},
 		disabled : function( disabled ) {
-			this.discardBtn.model.set( 'disabled', disabled );
-			this.uploadBtn.model.set( 'disabled', disabled );
+			this.$discardBtn.prop( 'disabled', disabled );
+			this.$uploadBtn.prop( 'disabled', disabled );
 		},
 		_uploadSuccessHandler : function() {
 			this.trigger( 'action:uploaded:dataimage' );
@@ -195,93 +121,59 @@
 			return this.controller.uploader.uploader.uploader;
 		}
 	});
-	
-	
-	
+
+
 	wp.media.cheese.view.WebcamRecorder = wp.media.View.extend({
-		tagName:   'div',
-		className: 'webcam-recorder',
+//		tagName:   'div',
+		template: wp.template('cheese-recorder'),
+		className: 'cheese-recorder',
 		controller:null,
 		action:'record',
-		_webcam : null,
-		_recorder : null,
-		_instruments : null,
-		
-		initialize: function() {
-			_.defaults( this.options, {
-			});
-			var self = this;
+		$webcam : null,
+		$recorder : null,
 
+		events: {
+			'click [data-action="init"]' : 'start',
+			'click [data-action="record"]' : 'recordImage'
+		},
+		render: function() {
+			var self = this,
+				recorderOptions = {
+					camera:{mandatory:{
+						minWidth: 640,
+						minHeight: 480
+					}},
+					microphone:false
+				};
 
-			this._recorder = $('<div class="recorder"></div>')
-				.appendTo( this.$el )
-				.on('click','.recorder-record',function(event) {
-					event.preventDefault( );
-					self.trigger('action:create:dataimage', self , self._webcam.snapshot() );
-					self.stop();
-					return false;
-				});
-			this._instruments = $('<div class="instruments">'
-					+ '<a href="#" class="button recorder-record button-primary button-action"><span class="dashicons dashicons-video-alt2"></span>'+l10n.record+'</a>'
-				+ '</div>')
-				.appendTo(this._recorder);
-			this.$el.on('click','.error-try-again',function(){
-				self.start();
-				self.$el.find('.error').remove();
-			});
-			if ( ! this._webcam ) {
-				var recorderOptions = {
-						camera:{mandatory:{
-							minWidth: 640,
-							minHeight: 480
-						}},
-						microphone:false
-					};
-				this._webcam = $(this._recorder).recorder(recorderOptions);
-			
-				this._webcam.on('recorder:state:ready' , function(e){
-// 					setTimeout( function(){self.start()} , 50 );
-				} ); // html5 fires on create. Bad...
-				this._webcam.on('recorder:state:waiting',function(e){
-					self._instruments.hide();
-				});
-				this._webcam.on('recorder:state:started',function(e){ 
-					self._instruments.show();
-				});
-				this._webcam.on('recorder:state:error',function(e){
-					self.$el.append('<div class="error recorder-inline-content"><h3>'+l10n.an_error_occured+'</h3><p><a class="error-try-again" href="#">'+l10n.try_again+'</a></p></div>');
-					self._instruments.hide();
-				});
-				this._webcam.on('recorder:state:permissionerror',function( event, element, err ){
-					var msg = err.message || l10n.please_allow_camera_message;
-					self.$el.append('<div class="error recorder-inline-content"><h3>'+msg+'</h3><p><a class="error-try-again" href="#">'+l10n.try_again+'</a></p></div>');
-					self._instruments.hide();
-				});
-				this._webcam.on('recorder:state:stopped',function(e){
-					self._instruments.hide();
-				});
-			}
+			wp.media.View.prototype.render.apply( this, arguments );
 
-			this._instruments.hide();
+			this.$recorder = this.$('.recorder');
+
+			this.$webcam = $(this.$recorder).recorder(recorderOptions)
+
+			return this;
+		},
+		recordImage: function( e ){
+			this.trigger('action:create:dataimage', this , this.$webcam.snapshot() );
+			this.stop();
 		},
 		get_state : function() {
-			return this._webcam.state;
-			// states: ds-image existing
-			// camera running
-			// camera error
-			// camera waiting
+			return this.$webcam.state;
 		},
 		start : function() {
 			var self = this;
-			if ( ! this._recorder.is(':visible') )
-				this._recorder.show();
-			this._webcam.start();
+			if ( ! this.$recorder.is(':visible') ) {
+				this.$recorder.show();
+			}
+			this.$webcam.start();
 			return this;
 		},
 		stop : function(){
-			this._webcam.stop();
-			if ( this._recorder.is(':visible') )
-				this._recorder.hide();
+			this.$webcam.stop();
+			if ( this.$recorder.is(':visible') ) {
+				this.$recorder.hide();
+			}
 			return this;
 		},
 		show:function(){
@@ -295,32 +187,26 @@
 	});
 	
 	wp.media.cheese.view.Pasteboard = wp.media.View.extend({
-		tagName:   'div',
-		className: 'pasteboard',
+		template: wp.template('cheese-pasteboard'),
+		className: 'cheese-pasteboard',
 		controller:null,
 		action:'paste',
-		_content : null,
-		_pasteboard : null,
-		
-		initialize: function() {
-			_.defaults( this.options, {
-			});
+		$pasteboard : null,
+
+		render: function() {
 			var self = this;
-			
-			this._pasteboard = $( '<div id="pasteboard-injector" contenteditable tabindex="0"></div>' )
-				.appendTo( this.$el );	
-			this._status = $('<div class="pasteboard-status"></div>')
-				.appendTo(this.$el);
-			$('<div class="pasteboard-click-here"><div>'+l10n.click_here+'</div><div>')
-				.appendTo(this.$el)
-			this._pasteboard.pastableContenteditable();
+			wp.media.View.prototype.render.apply(this,arguments);
+			this.$pasteboard = this.$( '.injector' ).pastableContenteditable();
+			this.$message = this.$( '.message' );
+			this.$pasteboard.on('click', function(){
+				self.show_message('');
+			} );
+			return this;
 		},
 		start : function(){
 			var self = this;
 
-			this.show_instructions();
-
-			this._pasteboard
+			this.$pasteboard
 				.on('pasteImage' , function( e, data ) {
 					self.trigger( 'action:create:dataimage', this , data.dataURL );
 				} )
@@ -336,7 +222,7 @@
 			return this;
 		},
 		stop : function(){
-			this._pasteboard
+			this.$pasteboard
 				.off('pasteImage')
 				.off('pasteImageError')
 				.off('pasteText');
@@ -351,69 +237,61 @@
 			return this;
 		},
 		show_message:function( msg ) {
-			this._status.html( '<div class="message">' + msg + '</div>' );
-		},
-		show_instructions:function() {
-			this._status.html( '<div class="instructions">' + l10n.paste_instructions + '</div>' );
+			this.$message.text( msg );
 		}
 	});
 
 	wp.media.cheese.view.DataSourceImageGrabber = wp.media.View.extend({
-		tagName:   'div',
-		className : 'image-grabber',
+//		tagName:   'div',
+		template: wp.template('cheese-grabber'),
+		className : 'cheese-grabber',
 		
 		grabber : null,
 		uploader : null,
 		
 		initialize : function() {
-			wp.media.View.prototype.initialize.apply( this, arguments );
+			var ret = wp.media.View.prototype.initialize.apply( this, arguments );
 
 			_.defaults( this.options, {
-				wpuploader	: null,
-			});
-
-			var defaultFileName = (this.options.grabber == wp.media.cheese.view.WebcamRecorder) 
+				wpuploader		: null,
+				defaultFileName	: (this.options.grabber == wp.media.cheese.view.WebcamRecorder) 
 						? l10n.snapshot 
 						: ((this.options.grabber == wp.media.cheese.view.Pasteboard) 
 							? l10n.pasted 
 							: l10n.image 
 						),
-				title = (this.options.grabber == wp.media.cheese.view.WebcamRecorder) 
-								? l10n.take_snapshot 
-								: ((this.options.grabber == wp.media.cheese.view.Pasteboard) 
-									? l10n.copy_paste 
-									: l10n.image 
-								),
-				wrap = new wp.media.View({
-					className : 'image-grabber-content',
-					tagName : 'div',
-					controller:this.controller
-				}), 
-				titleDiv = new wp.media.View({
-					className : 'media-frame-title',
-					tagName : 'div'
-				}),
-				titleH1 = new wp.media.View({
-					tagName : 'h1'
-				});
+				title			: (this.options.grabber == wp.media.cheese.view.WebcamRecorder) 
+						? l10n.take_snapshot 
+						: ((this.options.grabber == wp.media.cheese.view.Pasteboard) 
+							? l10n.copy_paste 
+							: l10n.image 
+						)
+			});
 
 			this.grabber  = new this.options.grabber( { controller	: this.controller } );
 
 			this.uploader = new wp.media.cheese.view.DataSourceImageUploader( {	
 									controller		: this.controller,
 									uploder			: this.options.wpuploader,
-									defaultFileName	: defaultFileName
+									defaultFileName	: this.options.defaultFileName
 								});
-
-			wrap.views.add( this.grabber );
-			wrap.views.add( this.uploader );
-			titleH1.$el.text( title );
-			titleDiv.views.add( titleH1 );
-			this.views.add( titleDiv );
-			this.views.add( wrap );
+			this.render();
 
 			this.listenTo( this.grabber, 'action:create:dataimage',	this.imageCreated );
 			this.listenTo( this.uploader, 'action:discard:dataimage',	this.startGrabbing );
+
+			return ret;
+		},
+		render:function(){
+			var self = this;
+
+			wp.media.View.prototype.render.apply( this, arguments );
+
+			this.$('.content')
+				.append( this.grabber.render().$el )
+				.append( this.uploader.render().$el );
+
+			return this;
 		},
 		imageCreated : function( grabber , imageData ) {
 			this.grabber.stop().hide();

@@ -69,7 +69,12 @@
 		create : function(){},
 		start : function() {},
 		stop : function(){},
-		snapshot : function(){}
+		snapshot : function(){},
+		update_state : function( state ) {
+			this.state = state;
+			this.trigger(  $.Event('recorder:state:' + state ) , this.element , 'ready' );
+			this.attr( 'data-state', state );
+		}
 	});
 	/*
 	events
@@ -102,39 +107,39 @@
 					html = '<video class="webcam-recorder" ' + whstring + ' id="'+id+'" autoplay="autoplay"></video>';
 				
 				this.trigger( $.Event('recorder:create') , $(html).get(0) );
-				setTimeout(function(){$self.trigger(  $.Event('recorder:state:ready') , $self.element , 'ready' );},20);
+				setTimeout( function(){
+					$self.update_state( 'ready' );
+				},
+				20 );
 			},
 			start : function(){
 				var $self = this;
 				
 				navigator.mediaDevices.getUserMedia( this.options.constraints )
-				.then(
-					function( localMediaStream ) { // success
-						if (this.element.mozSrcObject !== undefined) {
-							this.element.mozSrcObject = localMediaStream;
-						} else {
-							this.element.src = (window.URL && window.URL.createObjectURL(localMediaStream)) || localMediaStream;
-						};
-						stream = localMediaStream;
-						// should be separated from this class?
+					.then(
+						function( localMediaStream ) { // success
+							if (this.element.mozSrcObject !== undefined) {
+								this.element.mozSrcObject = localMediaStream;
+							} else {
+								this.element.src = (window.URL && window.URL.createObjectURL(localMediaStream)) || localMediaStream;
+							};
+							stream = localMediaStream;
+							// should be separated from this class?
 
-						// Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
-						// See crbug.com/110938.
-						$(this.element).on('playing', function(e) {
-							self.state = 'started';
-							$self.trigger( $.Event('recorder:state:started') , $self.element );
-						});
-				}.bind(this) )
-				.catch( function(e) { 
-					$self.state = 'error';
-					if ( e.code === 1 || e.name == "PermissionDeniedError" ) {
-						$self.trigger( $.Event('recorder:state:permissionerror') , [$self.element, e] );
-					} else {
-						$self.trigger( $.Event('recorder:state:error') , [$self.element, e] );
-					}
-				});
-				this.state = 'waiting';
-				this.trigger( $.Event('recorder:state:waiting') , this.element );
+							// Note: onloadedmetadata doesn't fire in Chrome when using it with getUserMedia.
+							// See crbug.com/110938.
+							$(this.element).on('playing', function(e) {
+								$self.update_state( 'started' );
+							});
+					}.bind(this) )
+					.catch( function(e) { 
+						if ( e.code === 1 || e.name == "PermissionDeniedError" || e.name == "PermissionDismissedError"  ) {
+							$self.update_state( 'permissionerror' );
+						} else {
+							$self.update_state( 'error' );
+						}
+					});
+				this.update_state( 'waiting' );
 				
 			},
 			stop : function(){
@@ -152,9 +157,8 @@
 					}
 				}
 				$(this.element).off('playing');
-//				this.element.src = null;
-				this.state = 'stopped';
-				this.trigger( $.Event('recorder:state:stopped') , this.element );
+
+				this.update_state( 'stopped' );
 			},
 			snapshot : function(){
 				var width,height;
@@ -174,7 +178,7 @@
 			}
 		}
 	}
-	for (s in recorder_modules) {
+	for ( s in recorder_modules ) {
 		if ( recorder_modules[s].supported ) {
 			$.extend( $.fn.recorder.prototype , recorder_modules[s] );
 			$.recorder.supported = true;
