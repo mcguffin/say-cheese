@@ -1,50 +1,33 @@
 <?php
 
-if ( ! defined('ABSPATH') ) 
-	die();
+namespace SayCheese\Settings;
+use SayCheese\Core;
 
+class SettingsMedia extends Settings {
 
+	private $optionset = 'media'; 
 
-class SayCheeseSettings {
-	private static $_instance = null;
-	
-	/**
-	 * Setup which to WP options page the Rainbow options will be added.
-	 * 
-	 * Possible values: general | writing | reading | discussion | media | permalink
-	 */
-	private $optionset = 'media'; // writing | reading | discussion | media | permalink
 
 	/**
-	 * Getting a singleton.
-	 *
-	 * @return object single instance of TestSettings
+	 *	Constructor
 	 */
-	public static function getInstance() {
-		if ( is_null( self::$_instance ) )
-			self::$_instance = new self();
-		return self::$_instance;
-	}
+	protected function __construct() {
 
-	/**
-	 * Private constructor
-	 */
-	private function __construct() {
-		add_action( 'admin_init' , array( &$this , 'register_settings' ) );
-
-		// add default options
 		add_option( 'saycheese_enable_snapshot', is_ssl() );
 		add_option( 'saycheese_enable_pasteboard', true );
+
+		parent::__construct();
+
 	}
 
+
+
 	/**
-	 *	Setup options page.
+	 *	Setup options.
 	 *
 	 *	@action admin_init
-	 *	@uses settings_description
-	 *	@uses checkbox
 	 */
-	function register_settings() {
+	public function register_settings() {
 		$settings_section = 'saycheese_settings';
 		// more settings go here ...
 
@@ -107,6 +90,5 @@ class SayCheeseSettings {
 		}
 	}
 
-}
 
-SayCheeseSettings::getInstance();
+}

@@ -11,9 +11,18 @@ License: GPL2
 */
 
 
+namespace SayCheese;
 
-if ( is_admin() ) {
-	require_once plugin_dir_path(__FILE__).'/include/class-say-cheese-admin.php';
-	require_once plugin_dir_path(__FILE__).'/include/class-say-cheese-settings.php';
+define( 'SAY_CHEESE_FILE', __FILE__ );
+define( 'SAY_CHEESE_VERSION', '0.2.0' );
+define( 'SAY_CHEESE_DIRECTORY', plugin_dir_path(__FILE__) );
+
+require_once SAY_CHEESE_DIRECTORY . 'include/vendor/autoload.php';
+
+Core\Core::instance();
+
+if ( is_admin() || defined( 'DOING_AJAX' ) ) {
+
+	Admin\Admin::instance();
+
 }
-

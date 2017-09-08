@@ -1,57 +1,32 @@
 <?php
 
-if ( ! defined('ABSPATH') ) 
-	die();
+namespace SayCheese\Admin;
+use SayCheese\Core;
 
 
+class Admin extends Core\Singleton {
 
-class SayCheeseAdmin {
-
-	/**
-	 *	Singleton instance
-	 */
-	private static $_instance	= null;
-
-	/**
-	 *	Get singleton instance
-	 */
-	public static function getInstance() {
-		if ( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
-
-	/**
-	 *	Prevent cloning
-	 */
-	private function __clone(){}
+	private $core;
 
 	/**
 	 *	Private constructor
 	 */
-	private function __construct() {
+	protected function __construct() {
+
+		$this->core = Core\Core::instance();
+
 		add_action( 'admin_init' , array( $this, 'admin_init' ) );
 		add_action( 'wp_enqueue_media' , array( $this, 'wp_enqueue_media' ) );
 	}
 
 
 	/**
-	 *	@action 'plugins_loaded'
-	 */
-	function plugins_loaded() {
-		load_plugin_textdomain( 'say-cheese', false, dirname( plugin_basename( dirname(__FILE__) ) ) . '/languages/' );
-	}
-
-	/**
-	 *	Register cheese scripts along with wp media
-	 *
-	 *	@action wp_enqueue_media
+	 * Admin init
 	 */
 	function admin_init() {
-		$version = '0.1.2';
+		$version = SAY_CHEESE_VERSION;
 		wp_register_script( 'cheese-base', 
-			plugins_url( 'js/cheese.min.js' , dirname( __FILE__ ) ), 
+			plugins_url( 'js/cheese.min.js' , SAY_CHEESE_FILE ), 
 			array( 'jquery', 'swfobject', 'media-editor' ), 
 			$version
 		);
@@ -79,7 +54,7 @@ class SayCheeseAdmin {
 			'enable_pasteboard' 			=> get_option( 'saycheese_enable_pasteboard' , true ),
 		) );
 
-		wp_register_style( 'cheese' , plugins_url( 'css/cheese.css' , dirname( __FILE__ ) ) , array( ) , $version );
+		wp_register_style( 'cheese' , plugins_url( 'css/cheese.css' , SAY_CHEESE_FILE ) , array( ) , $version );
 	}
 
 	/**
@@ -95,7 +70,5 @@ class SayCheeseAdmin {
 		wp_enqueue_style( 'cheese' );
 	}
 
-	
 }
 
-SayCheeseAdmin::getInstance();

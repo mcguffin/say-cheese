@@ -69,7 +69,7 @@
 		uploader : null,
 		
 		_model : {},
-		
+
 		initialize : function() {
 
 			wp.media.View.prototype.initialize.apply( this, arguments );
