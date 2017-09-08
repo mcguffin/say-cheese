@@ -106,13 +106,25 @@ div.webcam-recorder {
 
 #pasteboard-injector {
 	text-align:center;
-	color:#aa0000;
+	color:rgba(0,0,0,0);
 	font-style:italic;
 	position:absolute;
 	left:0;
 	top:0;
 	bottom:0;
 	right:0;
+	& ~ .pasteboard-status {
+		display:none;
+	}
+	&:focus {
+//		background:#f00;
+		& ~ .pasteboard-status {
+			display:block;
+		}
+		& ~ .pasteboard-click-here {
+			display:none;
+		}
+	}
 }
 
 .image-grabber {
@@ -142,12 +154,14 @@ div.webcam-recorder {
 	}
 }
 
+.pasteboard-click-here,
 .pasteboard-status {
     position: absolute;
     bottom: 55%;
     left: 0px;
     right: 0px;
 	text-align:center;
+	pointer-events:none;
 	& > * {
 		position:static;
 		font-size: 20px;

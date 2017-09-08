@@ -73,6 +73,7 @@ class SayCheeseAdmin {
 				'paste_error'					=> __('Error pasting image data.','say-cheese'),
 				'please_allow_camera_message' 	=> __( 'Please allow camera access in your browser.' , 'say-cheese' ),
 				'an_error_occured'				=> __( 'An error occured.' , 'say-cheese' ),
+				'click_here'					=> __( 'Click here please...' , 'say-cheese' ),
 			),
 			'enable_snapshot' 				=> get_option( 'saycheese_enable_snapshot' , is_ssl() ),
 			'enable_pasteboard' 			=> get_option( 'saycheese_enable_pasteboard' , true ),

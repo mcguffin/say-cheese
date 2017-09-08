@@ -320,8 +320,9 @@ console.trace('views.Recorder stop');
 				.appendTo( this.$el );	
 			this._status = $('<div class="pasteboard-status"></div>')
 				.appendTo(this.$el);
+			$('<div class="pasteboard-click-here"><div>'+l10n.click_here+'</div><div>')
+				.appendTo(this.$el)
 			this._pasteboard.pastableContenteditable();
-			
 		},
 		start : function(){
 			var self = this;
