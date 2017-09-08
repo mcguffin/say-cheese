@@ -16,12 +16,6 @@ recorder:
 
 
 */
-#pasteboard-injector {
-	width:100px;
-	height:100px;
-	margin:0 auto;
-	background:rgba(0,0,0,0.2);
-}
 .wp-core-ui {
 
 	.grabber-button {
@@ -80,11 +74,6 @@ recorder:
 	}
 }
 
-
-.data-source-image .instruments {
-}
-
-
 div.webcam-recorder {
 	height:100%;
 }
@@ -119,6 +108,11 @@ div.webcam-recorder {
 	text-align:center;
 	color:#aa0000;
 	font-style:italic;
+	position:absolute;
+	left:0;
+	top:0;
+	bottom:0;
+	right:0;
 }
 
 .image-grabber {
@@ -137,6 +131,7 @@ div.webcam-recorder {
 		box-sizing: border-box;
 		overflow:auto;
 		padding:1em 0;
+		position:relative;
 	}
 }
 
@@ -147,6 +142,22 @@ div.webcam-recorder {
 	}
 }
 
+.pasteboard-status {
+    position: absolute;
+    bottom: 55%;
+    left: 0px;
+    right: 0px;
+	text-align:center;
+	& > * {
+		position:static;
+		font-size: 20px;
+		line-height: 28px;
+		font-weight: 400;
+	}
+	& > .message {
+		color:#aa0000;
+	}
+}
 
 .recorder-inline-content,
 .pasteboard-inline-content {
@@ -160,6 +171,9 @@ div.webcam-recorder {
 		font-weight: 400;
 		margin-bottom: 1.6em;
 		text-align:center;
+	}
+	&:focus {
+		outline:box-shadow 0 0 10px 
 	}
 }
 .recorder-inline-content {

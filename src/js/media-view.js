@@ -315,39 +315,38 @@
 			});
 			var self = this;
 			
-			this._content = $('<div class="pasteboard-inline-content"><h3>' + l10n.paste_instructions + '</h3></div>')
+			this._pasteboard = $( '<div id="pasteboard-injector" contenteditable tabindex="0"></div>' )
+				.appendTo( this.$el );	
+			this._status = $('<div class="pasteboard-status"></div>')
 				.appendTo(this.$el);
-			this._pasteboard = $( '<div id="pasteboard-injector" contenteditable></div>' )
-				.appendTo( this._content );	
 			this._pasteboard.pastableContenteditable();
+			
 		},
 		start : function(){
 			var self = this;
-			
+
+			this.show_instructions();
+
 			this._pasteboard
-// 				.imagepastebox({
-// 					messages : {
-// 						no_image_pasted : l10n.paste_error_no_image,
-// 						no_processible_image_pasted : l10n.paste_error_webkit_fake_image,
-// 					}
-// 				})
 				.on('pasteImage' , function( e, data ) {
-					self._onPaste( data );
+					self.trigger( 'action:create:dataimage', this , data.dataURL );
 				} )
 				.on('pasteImageError' , function( e, data ) {
 					self.show_message( l10n.paste_error );
+					$( this ).html('');
 				} )
 				.on('pasteText' , function( e, data ) {
 					self.show_message( l10n.paste_error_no_image );
+					$( this ).html('');
 				} )
 				.focus();
-//			this.listenTo( this.pasteboard, 'pasteimage' , this._onPaste );
 			return this;
 		},
 		stop : function(){
 			this._pasteboard
-//				.imagepastebox('off')
-				.off('pasteimage');
+				.off('pasteImage')
+				.off('pasteImageError')
+				.off('pasteText');
 			return this;
 		},
 		show:function(){
@@ -358,11 +357,11 @@
 			this.$el.hide();
 			return this;
 		},
-		_onPaste : function( data ) {
-			this.trigger( 'action:create:dataimage', this , data.dataURL );
-		},
 		show_message:function( msg ) {
-			this._pasteboard.text( msg );
+			this._status.html( '<div class="message">' + msg + '</div>' );
+		},
+		show_instructions:function() {
+			this._status.html( '<div class="instructions">' + l10n.paste_instructions + '</div>' );
 		}
 	});
 
