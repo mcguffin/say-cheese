@@ -13,8 +13,16 @@ if ( ! defined('ABSPATH') )
 		</button>
 		<label class="setting">
 			<span><?php _e( 'Title', 'say-cheese' ); ?></span>
-			<input class="alignment" type="text" data-setting="title" />
+			<input class="widefat" type="text" data-setting="title" /><# console.log(jQuery,cheese.options.mime_types) #>
 		</label>
+		<div class="select-format" data-setting="format">
+			<# jQuery.each( cheese.options.mime_types, function( mime, suffix ){
+				#>
+					<input type="radio" name="cheese-upload-format" id="cheese-format-{{{ suffix }}}" value="{{{ mime }}}" />
+					<label for="cheese-format-{{{ suffix }}}">.{{{ suffix }}}</label><br />
+				<#
+			}); #>
+		</div>
 		<button type="button" class="button image-upload button-primary button-large button-action" data-action="upload">
 			<span class="dashicons dashicons-yes"></span>
 			<?php _e( 'Upload', 'say-cheese' ); ?>

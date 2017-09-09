@@ -37,23 +37,35 @@
 		},
 		setImageData : function( data ) {
 			var container = this.$imageContainer.html('').get(0),
-				self = this;
-			if ( this.image ) 
+				self = this,
+				format = data.match(/data:(image\/(\w+));/)[1];
+
+			if ( ! cheese.options.mime_types[format] ) {
+				format = this.options.defaultFileFormat;
+			}
+			
+			if ( this.image ) {
 				this.image.destroy();
+			}
 
 			this.image = new o.Image();
 			this.image.onload = function() {
 				var opts = self.getUploader().getOption('resize'),
 					scale = Math.max( opts.width / this.width, opts.height / this.height );
+
 				!!opts && (scale < 1) && this.downsize( this.width*scale, this.height*scale );
+
 				this.embed( container );
 			}
 			this.image.bind('Resize', function(e) {
 				this.embed( container );
 			});
 			this.image.load( data );
-			if ( this.$imageContainer )
+			if ( this.$imageContainer ) {
 				this.$imageContainer.append(this.image);
+			}
+			this.$('[data-setting="format"] input[value="'+format+'"]').prop( 'checked', true );
+
 			this.disabled(false);
 			return this;
 		},
@@ -71,8 +83,9 @@
 		},
 		uploadImage : function() {
 
-			var type = 'image/png',
-				name = this.$('input[data-setting="title"]').val() + '.png',
+			var type = this.$('[data-setting="format"] :checked').val(),
+				suffix = cheese.options.mime_types[ type ],
+				name = this.$('input[data-setting="title"]').val() + '.' + suffix,
 				blob = this.image.getAsBlob( type );
 
 			this.bindUploaderEvents();
@@ -153,7 +166,7 @@
 
 			return this;
 		},
-		recordImage: function( e ){
+		recordImage: function( e ) {
 			this.trigger('action:create:dataimage', this , this.$webcam.snapshot() );
 			this.stop();
 		},
@@ -168,18 +181,18 @@
 			this.$webcam.start();
 			return this;
 		},
-		stop : function(){
+		stop : function() {
 			this.$webcam.stop();
 			if ( this.$recorder.is(':visible') ) {
 				this.$recorder.hide();
 			}
 			return this;
 		},
-		show:function(){
+		show:function() {
 			this.$el.show();
 			return this;
 		},
-		hide:function(){
+		hide:function() {
 			this.$el.hide();
 			return this;
 		}
@@ -202,7 +215,7 @@
 			} );
 			return this;
 		},
-		start : function(){
+		start : function() {
 			var self = this;
 
 			this.$pasteboard
@@ -224,18 +237,18 @@
 
 			return this;
 		},
-		stop : function(){
+		stop : function() {
 			this.$pasteboard
 				.off('pasteImage')
 				.off('pasteImageError')
 				.off('pasteText');
 			return this;
 		},
-		show:function(){
+		show:function() {
 			this.$el.show();
 			return this;
 		},
-		hide:function(){
+		hide:function() {
 			this.$el.hide();
 			return this;
 		},
@@ -263,6 +276,9 @@
 							? l10n.pasted 
 							: l10n.image 
 						),
+				defaultFileFormat : (this.options.grabber == wp.media.cheese.view.WebcamRecorder) 
+						? 'image/jpeg'
+						: 'image/png',
 				title			: (this.options.grabber == wp.media.cheese.view.WebcamRecorder) 
 						? l10n.take_snapshot 
 						: ((this.options.grabber == wp.media.cheese.view.Pasteboard) 
@@ -274,9 +290,10 @@
 			this.grabber  = new this.options.grabber( { controller	: this.controller } );
 
 			this.uploader = new wp.media.cheese.view.DataSourceImageUploader( {	
-									controller		: this.controller,
-									uploder			: this.options.wpuploader,
-									defaultFileName	: this.options.defaultFileName
+									controller			: this.controller,
+									uploder				: this.options.wpuploader,
+									defaultFileName		: this.options.defaultFileName,
+									defaultFileFormat	: this.options.defaultFileFormat
 								});
 			this.render();
 

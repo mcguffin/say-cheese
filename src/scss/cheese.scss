@@ -142,25 +142,29 @@
 		text-align: center;
 	}
 	.instruments {
-		.button-action {
-			float:left;
-		}
-		.setting {
-			float:left;
-			text-align:left;
+		& > * {
 			display:block;
-			width:400px;
-			margin:0 1em;
-			padding:0.2em;
+			float:left;
+			margin-right:10px;
+			&:last-child {
+				margin-right:0px;
+			}
+		}
+		.button-action {
+//			float:left;
 		}
 		.setting {
-			input {
-				box-sizing:border-box;
-				width:100%;
+			width:400px;
+//			padding-top:2px;
+			input[type="text"] {
+				.media-frame & {
+					font-size:16px;
+				}
 			}
-			span {
-				display:block;
-			}
+		}
+		.select-format {
+//			float:left;
+			padding-top:10px;
 		}
 	}
 }

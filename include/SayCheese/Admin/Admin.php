@@ -55,6 +55,10 @@ class Admin extends Core\Singleton {
 			'options' => array(
 				'enable_snapshot' 				=> get_option( 'saycheese_enable_snapshot' , is_ssl() ),
 				'enable_pasteboard' 			=> get_option( 'saycheese_enable_pasteboard' , true ),
+				'mime_types'					=> array(
+					'image/jpeg'	=> 'jpg',
+					'image/png'		=> 'png',
+				),
 			),
 		) );
 
