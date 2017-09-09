@@ -59,6 +59,7 @@ class Admin extends Core\Singleton {
 					'image/jpeg'	=> 'jpg',
 					'image/png'		=> 'png',
 				),
+				'jpeg_quality'					=> apply_filters( 'jpeg_quality', 90, 'edit_image' ),
 			),
 		) );
 

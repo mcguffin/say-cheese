@@ -86,7 +86,7 @@
 			var type = this.$('[data-setting="format"] :checked').val(),
 				suffix = cheese.options.mime_types[ type ],
 				name = this.$('input[data-setting="title"]').val() + '.' + suffix,
-				blob = this.image.getAsBlob( type );
+				blob = this.image.getAsBlob( type, cheese.options.jpeg_quality );
 
 			this.bindUploaderEvents();
 
