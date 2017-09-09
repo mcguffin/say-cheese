@@ -15,6 +15,8 @@ class Admin extends Core\Singleton {
 
 		$this->core = Core\Core::instance();
 
+		$this->mce = TinyMce\TinyMceCheese::instance();
+
 		add_action( 'admin_init' , array( $this, 'admin_init' ) );
 		add_action( 'wp_enqueue_media' , array( $this, 'wp_enqueue_media' ) );
 		add_action( 'print_media_templates',  array( $this, 'print_media_templates' ) );
@@ -31,13 +33,13 @@ class Admin extends Core\Singleton {
 		$version = SAY_CHEESE_VERSION;
 
 		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
-			$script_source = 'js/cheese-with-sourcemap.min.js';
+			$script_source = 'js/admin/cheese-with-sourcemap.min.js';
 		} else {
-			$script_source = 'js/cheese.min.js';
+			$script_source = 'js/admin/cheese.min.js';
 		}
 
 		wp_register_script( 'cheese-base', 
-			plugins_url( $script_source , SAY_CHEESE_FILE ), 
+			$this->core->get_asset_url( $script_source ),
 			array( 'jquery', 'swfobject', 'media-editor' ), 
 			$version
 		);
@@ -63,7 +65,7 @@ class Admin extends Core\Singleton {
 			),
 		) );
 
-		wp_register_style( 'cheese' , plugins_url( 'css/cheese.css' , SAY_CHEESE_FILE ) , array( ) , $version );
+		wp_register_style( 'cheese' , $this->core->get_asset_url( 'css/admin/cheese.css' ) , array( ) , $version );
 	}
 
 	/**

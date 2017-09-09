@@ -66,6 +66,7 @@
 			}
 			this.$('[data-setting="format"] input[value="'+format+'"]').prop( 'checked', true );
 
+
 			this.disabled(false);
 			return this;
 		},

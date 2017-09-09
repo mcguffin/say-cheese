@@ -13,7 +13,7 @@ if ( ! defined('ABSPATH') )
 		</button>
 		<label class="setting">
 			<span><?php _e( 'Title', 'say-cheese' ); ?></span>
-			<input class="widefat" type="text" data-setting="title" /><# console.log(jQuery,cheese.options.mime_types) #>
+			<input class="widefat" type="text" data-setting="title" />
 		</label>
 		<div class="select-format" data-setting="format">
 			<# jQuery.each( cheese.options.mime_types, function( mime, suffix ){
