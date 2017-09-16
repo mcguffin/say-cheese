@@ -43,9 +43,10 @@ gulp.task('scripts-admin', function() {
 
     var scr = [ gulp.src( vendor_scripts.concat( scripts ) )
 			.pipe( sourcemaps.init() )
-			.pipe( uglify().on('error', gulputil.log )  )
 			.pipe( concat('cheese.js') )
+			.pipe( sourcemaps.write() )
 			.pipe( gulp.dest('./js/admin/') )
+			.pipe( uglify().on('error', gulputil.log )  )
 			.pipe( rename('cheese.min.js') )
 			.pipe( sourcemaps.write() )
 			.pipe( gulp.dest('./js/admin/') ),
