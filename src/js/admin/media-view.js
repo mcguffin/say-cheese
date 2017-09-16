@@ -199,65 +199,6 @@
 		}
 	});
 	
-	wp.media.cheese.view.Pasteboard = wp.media.View.extend({
-		template: wp.template('cheese-pasteboard'),
-		className: 'cheese-pasteboard',
-		controller:null,
-		action:'paste',
-		$pasteboard : null,
-
-		render: function() {
-			var self = this;
-			wp.media.View.prototype.render.apply(this,arguments);
-			this.$pasteboard = this.$( '.injector' ).pastableContenteditable();
-			this.$message = this.$( '.message' );
-			this.$pasteboard.on('click', function(){
-				self.show_message('');
-			} );
-			return this;
-		},
-		start : function() {
-			var self = this;
-
-			this.$pasteboard
-				.on('pasteImage' , function( e, data ) {
-					self.trigger( 'action:create:dataimage', this , data.dataURL );
-				} )
-				.on('pasteImageError' , function( e, data ) {
-					self.show_message( l10n.paste_error );
-					$( this ).html('');
-				} )
-				.on('pasteText' , function( e, data ) {
-					self.show_message( l10n.paste_error_no_image );
-					$( this ).html('');
-				} );
-
-			setTimeout(function(){
-				self.$pasteboard.get(0).focus();
-			},1);
-
-			return this;
-		},
-		stop : function() {
-			this.$pasteboard
-				.off('pasteImage')
-				.off('pasteImageError')
-				.off('pasteText');
-			return this;
-		},
-		show:function() {
-			this.$el.show();
-			return this;
-		},
-		hide:function() {
-			this.$el.hide();
-			return this;
-		},
-		show_message:function( msg ) {
-			this.$message.text( msg );
-		}
-	});
-
 	wp.media.cheese.view.DataSourceImageGrabber = wp.media.View.extend({
 //		tagName:   'div',
 		template: wp.template('cheese-grabber'),
@@ -271,21 +212,9 @@
 
 			_.defaults( this.options, {
 				wpuploader		: null,
-				defaultFileName	: (this.options.grabber == wp.media.cheese.view.WebcamRecorder) 
-						? l10n.snapshot 
-						: ((this.options.grabber == wp.media.cheese.view.Pasteboard) 
-							? l10n.pasted 
-							: l10n.image 
-						),
-				defaultFileFormat : (this.options.grabber == wp.media.cheese.view.WebcamRecorder) 
-						? 'image/jpeg'
-						: 'image/png',
-				title			: (this.options.grabber == wp.media.cheese.view.WebcamRecorder) 
-						? l10n.take_snapshot 
-						: ((this.options.grabber == wp.media.cheese.view.Pasteboard) 
-							? l10n.copy_paste 
-							: l10n.image 
-						)
+				defaultFileName	: l10n.snapshot ,
+				defaultFileFormat : 'image/jpeg',
+				title			: l10n.take_snapshot 
 			});
 
 			this.grabber  = new this.options.grabber( { controller	: this.controller } );

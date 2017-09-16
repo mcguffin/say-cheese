@@ -2,22 +2,24 @@
 
 	var counter      = 0,
 		l10n = wp.media.cheese.l10n,
-		is_chrome = navigator.userAgent.indexOf('Chrome') > -1;
+		is_chrome = navigator.userAgent.indexOf('Chrome') > -1,
+		_parentFrameInitialize,
+		_parentBrowserInitialize;
 
 	$.extend( wp.Uploader.prototype, {
 		success : function( file_attachment ){
 		}
 	});
 
-
 	/**
 	 *	Integrate into media library modal
 	 */
+	_parentFrameInitialize = wp.media.view.MediaFrame.Select.prototype.initialize
 	// add states to browse router
 	_.extend( wp.media.view.MediaFrame.Select.prototype, {
 		_parentInitialize: wp.media.view.MediaFrame.Select.prototype.initialize,
 		initialize: function() {
-			this._parentInitialize.apply( this, arguments );
+			_parentFrameInitialize.apply( this, arguments );
 			this.bindCheeseHandlers();
 		},
 		_parentBrowseRouter: wp.media.view.MediaFrame.Select.prototype.browseRouter,
@@ -50,9 +52,8 @@
 					previousContent = content;
 			} , this );
 		
-			this.on( 'content:create:pasteboard', this.contentCreatePasteboard, this );
 			this.on( 'content:create:record', this.contentCreateRecord, this );
-			this.on( 'content:render:pasteboard content:render:record', this.contentRenderGrabber, this );
+			this.on( 'content:render:record', this.contentRenderGrabber, this );
 		
 			frame = this;
 		},
@@ -62,15 +63,6 @@
 			this.currentCheeseView = content.view = new wp.media.cheese.view.DataSourceImageGrabber( { 
 				controller	: this, 
 				grabber		: wp.media.cheese.view.WebcamRecorder
-			});
-			this.listenTo( this.currentCheeseView.uploader, 'action:uploaded:dataimage', this.uploadedDataImage )
-		},
-		contentCreatePasteboard: function( content ) {
-			var state = this.state();
-
-			this.currentCheeseView = content.view = new wp.media.cheese.view.DataSourceImageGrabber( { 
-				controller	: this, 
-				grabber		: wp.media.cheese.view.Pasteboard
 			});
 			this.listenTo( this.currentCheeseView.uploader, 'action:uploaded:dataimage', this.uploadedDataImage )
 		},
@@ -91,13 +83,14 @@
 	/**
 	 *	Add paste button to toolbar on upload.php
 	 */
+	 _parentBrowserInitialize = wp.media.view.AttachmentsBrowser.prototype.initialize
 	_.extend( wp.media.view.AttachmentsBrowser.prototype, {
 		_parentInitialize:	wp.media.view.AttachmentsBrowser.prototype.initialize,
 		initialize:	function() {
 			var self = this,
 				pasteBtn, recordBtn;
 
-			this._parentInitialize.apply(this,arguments);
+			_parentBrowserInitialize.apply(this,arguments);
 			
 			this.cheese = {
 				paste	: {
@@ -117,25 +110,6 @@
 
 			if ( ! ( this.controller instanceof wp.media.view.MediaFrame.Select ) ) {
 
-				if ( wp.media.cheese.supports.paste ) {
-
-					pasteBtn = new wp.media.view.Button( {
-						text		: l10n.copy_paste,
-						className:  'grabber-button',
-						priority	: -64,
-						click: function() {
-							self.cheese.active = self.cheese.paste;
-							self.cheeseOpen( l10n.copy_paste );
-						}
-					} );
-					this.cheese.paste.grabber = new wp.media.cheese.view.DataSourceImageGrabber( {
-						controller	: this.controller,
-						grabber		: wp.media.cheese.view.Pasteboard,
-						wpuploader	: this.controller.uploader.uploader.uploader
-					} );
-
-					this.toolbar.set( 'pasteModeButton', pasteBtn.render() );
-				}
 				if ( wp.media.cheese.supports.webcam_recording ) {
 
 					recordBtn = new wp.media.view.Button( {

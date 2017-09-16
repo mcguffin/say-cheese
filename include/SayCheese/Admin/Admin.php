@@ -31,7 +31,7 @@ class Admin extends Core\Singleton {
 		$version = SAY_CHEESE_VERSION;
 
 		if ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) {
-			$script_source = 'js/admin/cheese-with-sourcemap.min.js';
+			$script_source = 'js/admin/cheese.js';
 		} else {
 			$script_source = 'js/admin/cheese.min.js';
 		}

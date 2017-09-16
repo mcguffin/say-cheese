@@ -49,13 +49,13 @@ gulp.task('styles-admin',function(){
 gulp.task('scripts-admin', function() {
 
     var scr = [ gulp.src( vendor_scripts.concat( scripts ) )
-			.pipe(sourcemaps.init())
-			.pipe( uglify().on('error', gulputil.log ) )
-			.pipe( concat('cheese.min.js') )
-			.pipe( gulp.dest( './js/admin/' ) )
-			.pipe( rename('cheese-with-sourcemap.min.js') )
+			.pipe( sourcemaps.init() )
+			.pipe( uglify().on('error', gulputil.log )  )
+			.pipe( concat('cheese.js') )
+			.pipe( gulp.dest('./js/admin/') )
+			.pipe( rename('cheese.min.js') )
 			.pipe( sourcemaps.write() )
-			.pipe( gulp.dest( './js/admin/' ) ),
+			.pipe( gulp.dest('./js/admin/') ),
     ];
     for ( var s in mce_scripts ) {
     	scr.push( [
@@ -64,7 +64,7 @@ gulp.task('scripts-admin', function() {
 				.pipe( uglify().on('error', gulputil.log ) )
 				.pipe( concat( s + '-plugin.js') )
 				.pipe( gulp.dest( './js/admin/mce/' ) )
-				.pipe( rename( s + '-plugin-with-sourcemap.js') )
+				.pipe( rename( s + '.min.js') )
 				.pipe( sourcemaps.write() )
 				.pipe( gulp.dest( './js/admin/mce/' ) )
 		] );
