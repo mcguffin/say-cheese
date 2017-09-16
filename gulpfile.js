@@ -16,20 +16,13 @@ var styles = {
 	};
 var vendor_scripts = [
 		'./src/vendor/webrtc/adapter/release/adapter.js',
-		'./src/vendor/layerssss/paste.js/paste.js',
 	],
 	scripts = [
 		'./src/js/admin/jquery-webcam-recorder.js',
 		'./src/js/admin/cheese-base.js',
 		'./src/js/admin/cheese.js',
 		'./src/js/admin/media-view.js'
-	],
-	mce_scripts = {
-		'cheese' : [
-//			'./src/vendor/layerssss/paste.js/paste.js',
-			'./src/js/admin/mce/cheese-plugin.js',
-		]
-	};
+	];
 
 
 gulp.task('styles-admin',function(){
@@ -57,18 +50,7 @@ gulp.task('scripts-admin', function() {
 			.pipe( sourcemaps.write() )
 			.pipe( gulp.dest('./js/admin/') ),
     ];
-    for ( var s in mce_scripts ) {
-    	scr.push( [
-			gulp.src( mce_scripts[s] )
-				.pipe(sourcemaps.init())
-				.pipe( uglify().on('error', gulputil.log ) )
-				.pipe( concat( s + '-plugin.js') )
-				.pipe( gulp.dest( './js/admin/mce/' ) )
-				.pipe( rename( s + '.min.js') )
-				.pipe( sourcemaps.write() )
-				.pipe( gulp.dest( './js/admin/mce/' ) )
-		] );
-    }
+
     return scr;
 });
 
