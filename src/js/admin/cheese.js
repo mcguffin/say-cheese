@@ -82,7 +82,7 @@
 			var obj = { view: null };
 			this.browseContent(obj);
 			this.content.set( obj.view );
-			this.router.get().select('browse')
+			this.router.get().select('browse');
 		}
 	});
 	

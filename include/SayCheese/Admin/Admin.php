@@ -15,8 +15,6 @@ class Admin extends Core\Singleton {
 
 		$this->core = Core\Core::instance();
 
-		$this->mce = TinyMce\TinyMceCheese::instance();
-
 		add_action( 'admin_init' , array( $this, 'admin_init' ) );
 		add_action( 'wp_enqueue_media' , array( $this, 'wp_enqueue_media' ) );
 		add_action( 'print_media_templates',  array( $this, 'print_media_templates' ) );

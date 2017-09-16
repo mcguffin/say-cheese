@@ -26,7 +26,7 @@ var vendor_scripts = [
 	],
 	mce_scripts = {
 		'cheese' : [
-			'./src/vendor/layerssss/paste.js/paste.js',
+//			'./src/vendor/layerssss/paste.js/paste.js',
 			'./src/js/admin/mce/cheese-plugin.js',
 		]
 	};
